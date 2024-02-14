@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'contact.css' %}">
+{% endblock extrastyles %}
+
+{% block body %}
+
+<div class="mt" style="margin-top: 2%;">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade show" role="alert">
+        <strong>Message:</strong> {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor%}
+</div>
+
+<div class="form-area">
+    <div class="container">
+        <div class="row single-form g-0">
+            <div class="col-sm-12 col-lg-6">
+                <div class="left">
+                    <h2><span>Contact Us for</span><br> Feedback and Enquiries</h2>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-lg-6">
+                <div class="right">
+                    <i class="fa fa-caret-left"></i>
+                    <form method="post" action="/contact">
+                    
+                    {% csrf_token %}
+                        <div class="mb-3">
+
+                            <label for="name" class="form-label">Name</label>
+
+                            <input type="text" class="form-control" id="name" name="name">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="email" class="form-label">Email address</label>
+
+                            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp">
+
+                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="phone" class="form-label">Phone</label>
+
+                            <input type="text" class="form-control" id="phone" name="phone">
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="message" class="form-label">Feedback/Query</label>
+
+                            <textarea class="form-control" id="content" name="content" rows="5"></textarea> 
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

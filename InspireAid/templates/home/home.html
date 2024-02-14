@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'home.css' %}">
+{% endblock extrastyles %}
+
+{% block body %}
+<section class="main">
+
+    <div class="container d-flex align-items-center justify-content-center fs-1 text-white flex-column center-container">
+        
+        <h1>Your Giving Their Hope</h1>
+        <button type="button" class="btn btn-success rounded-pill">
+             Start Support Fund
+        </button>
+
+    </div>
+
+</section>
+
+<!-- setup section -->
+
+<section class="setup">
+    <div class="container">
+        <div class="text-header text-center">
+            <h3 style="color: #2BAE66;font-size: 42px; font-weight: 700;line-height: 48px; padding-bottom: 8px;">Get Started to Make Difference</h3>
+            <p>Join us in our mission to create positive change. Your support is invaluable, and we are grateful to have you as part of the InspireAid family.<p>
+        </div>
+
+        <div class="items text-center">
+            <div class="row">
+                <div class="back col-md-4 " >
+                    <div class="icons">
+                        <i class="fa-brands fa-searchengin"></i>
+                    </div>
+                    <div class="desc">
+                        <h5>Explore Our Causes</h5>
+                        <p>Discover the causes we support and the positive changes we aim to make. Whether it's education, healthcare, or environmental initiatives, find a cause that resonates with you.</p>
+                    </div>
+
+                </div>
+
+                <div class="back col-md-4">
+                    <div class="icons">
+                        <i class="fa-solid fa-ranking-star"></i>
+                    </div>
+                    <div class="desc">
+                        <h5>Make a Donation</h5>
+                        <p>Your support directly contributes to making a difference in the lives of those in need. Every contribution, no matter the size, counts.</p>
+                    </div>
+
+                </div>
+
+                <div class="back col-md-4">
+                    <div class="icons">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <div class="desc">
+                        <h5>Stay Connected</h5>
+                        <p>Follow our Blog to stay updated on our latest projects, events, and success stories. Follow us on social media to be part of our community and share the love.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock body %}

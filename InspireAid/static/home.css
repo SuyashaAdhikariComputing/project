@@ -1,0 +1,95 @@
+/*----main background section----*/
+
+.main{
+	background: url(main.jpg)no-repeat center;
+	background-size: cover;
+	width: 100%;
+	height: 100vh;
+}
+
+.main::before{
+	background-color: rgba(0,0,0,0.6);
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.main.container{
+	height: 100vh;
+	z-index: 1;
+	position: relative;
+}
+
+.main h1{
+	font-size: 1.1em;
+
+}
+
+.center-container{
+	
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    
+}
+
+.main button{
+	width: 24%;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	margin-top: 5%;
+
+}
+
+.main button:hover{
+
+transform: scale(1.1);
+
+}
+
+/*----Setup Section Styling----*/
+
+section.setup{
+	padding: 90px 0;
+}
+
+section.setup.text-header h3{
+	font-size: 42px;
+	font-weight: 700;
+	line-height: 48px;
+	color: #2BAE66;
+}
+
+section.setup .text-header p{
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 28px;
+	color: var(--gray-1);
+	padding-bottom: 10px;
+}
+
+section.setup.icons{
+	padding: 27px 0;
+}
+
+section.setup h5{
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 24px;
+	color: #2BAE66;
+	padding-bottom:18px ;
+}
+
+section.setup.desc p {
+
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 22px;
+	color: var(--gray-1);
+	max-width: 284px;
+	margin: 0 auto;
+}
