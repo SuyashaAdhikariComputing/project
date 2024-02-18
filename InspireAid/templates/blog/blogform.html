@@ -12,24 +12,34 @@
 <section class="wrapper mt-2" >
     <div class="container"style="margin-top: 8% ", "margin-bottom:8%";>
         <div class="col-sm-12 col-lg-6 offset-lg-3 text-center">
-            <form  method="post" action="#" class="rounded-2 shadow p-5 mt-5" style="background-color: #FCF6F5; height: 600px; ">
+            <form  method="post" action="{% url 'postcontent' %}" class="rounded-2 shadow p-5 mt-5" style="background-color: #FCF6F5; height: 600px; ">
+            
+            {% csrf_token %}  
+
                 <h3 class="text-dark fw-bolder fs-4 mb-2">Create a New Blog Post</h3>
+                
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="author" placeholder="Author">
+                    <input type="text" class="form-control" name='author' id="author" placeholder="Author">
                     <label for="author">Author</label>
                 </div>
+                
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="postTitle" placeholder="Blog Post Title">
+                    <input type="text" class="form-control" name='title' id="postTitle" placeholder="Blog Post Title">
                     <label for="postTitle">Blog Post Title</label>
                 </div>
+                
                 <div class="form-floating mb-3">
-                    <textarea class="form-control" id="postContent" rows="15" placeholder="Write your blog post content here" style="height: 200px;"></textarea>
+                    <textarea class="form-control" name='content' id="postContent" rows="15" placeholder="Write your blog post content here" style="height: 200px;"></textarea>
                     <label for="postContent">Blog Post Content</label>
                 </div>
               
                 <button type="submit" class="btn btn-success w-100 my-4">Publish Blog Post</button>
+            
             </form>
+        
         </div>
+    
     </div>
+
 </section>
 {% endblock body %}

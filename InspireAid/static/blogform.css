@@ -1,11 +1,14 @@
+body{
+	background-color: #2BAE66;
+}
+
+
 .form-control:focus {
     box-shadow: none;
     border-color: #2BAE66;
 }
 
-body{
-	background-color: #2BAE66;
-}
+
 
 
 
