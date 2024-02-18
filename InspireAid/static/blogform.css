@@ -1,0 +1,33 @@
+.form-control:focus {
+    box-shadow: none;
+    border-color: #2BAE66;
+}
+
+body{
+	background-color: #2BAE66;
+}
+
+
+
+.center-container{
+	
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    
+}
+
+.main button{
+	width: 27%;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	margin-top: 5%;
+
+}
+
+.main button:hover{
+
+transform: scale(1.1);
+
+}

@@ -8,6 +8,9 @@ def bloghome(request):
     context= {'allPosts': allPosts}
     return render(request,'blog/bloghome.html',context)
 
+def postcontent(request):
+    return render(request,'blog/blogform.html')
+
 def blogpost(request, slug):
     post= Post.objects.filter (slug=slug).first()
     context={'post': post}
