@@ -10,13 +10,30 @@
 
 {% block body %}
 
+
+
 <div class="container mb-4" style="margin-top: 8%;">
+ 
     <div class="row text-header text-center" style="margin-bottom: 50px;">
         <div class="col-12 section-intro">
             <h1 style="color: #2BAE66;font-size: 42px; font-weight: 700;line-height: 48px; padding-bottom: 8px;"> Our Blog Posts</h1>
             <p style="font-size: 20px; font-weight: 400; line-height: 28px;color: var(--gray-1);padding-bottom: 10px;">Welcome to our Success Stories blog, where we highlight the remarkable journeys and achievements of individuals and organizations. Be inspired by real-life success and discover the paths to triumph.</p>
         </div>
+
+        <div class="col-12">
+            <a href="{% url 'postcontent' %}" class="btn btn-success">Create Blog</a>
+        </div>
+
     </div>
+
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade show" role="alert">
+        <strong>Message:</strong> {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor%}
+
+   
     <div class="row">
         {% for post in allPosts %}
             <div class="col-md-6 mb-2 mt-4">
@@ -39,5 +56,7 @@
     </div>
 
 </div>
+
+
 
 {% endblock body %}
