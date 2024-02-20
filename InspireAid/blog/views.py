@@ -27,6 +27,24 @@ def blogpost(request, slug):
     context={'post': post}
     return render(request,'blog/blogPost.html',context)
 
+def edit_post(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+
+    if request.method == "POST":
+        author = request.POST['author']
+        title = request.POST['title']
+        content = request.POST['content'] 
+
+        post.author = author
+        post.title = title
+        post.content = content
+        post.save()
+        messages.success(request, "Successfully updated")
+        return redirect('blogpost', slug=slug)
+
+    context = {'post': post}
+    return render(request, 'blog/blogform.html', context)
+
 def deleteblog(request, slug):
     post = get_object_or_404(Post, slug=slug)
     post.delete()
