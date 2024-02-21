@@ -22,7 +22,7 @@ def Contact(request):
             Contact_value.save()
             messages.success(request, "Messege sent sucessfully")
 
-    return render(request,'home/contact.html')
+    return render(request,'home/contact.html')# go to contact page
 
 def about(request):
     return HttpResponse('This is about')

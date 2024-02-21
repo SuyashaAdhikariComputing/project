@@ -45,7 +45,7 @@
 
 					            <li class="nav-item">
 
-					              <a class="nav-link mx-lg-2" aria-current="page" href="#">Home</a>
+					              <a class="nav-link mx-lg-2" aria-current="page" href="{% url 'home' %}">Home</a>
 
 					            </li>
 
@@ -57,9 +57,15 @@
 
 					            <li class="nav-item">
 
-					            <a class="nav-link mx-lg-2" href="#">Contact Us</a>
+					            <a class="nav-link mx-lg-2" href="{% url 'contact' %}">Contact Us</a>
 					            
 					            </li>
+
+								<li class="nav-item">
+
+									<a class="nav-link mx-lg-2" href="{% url 'bloghome' %}">Blog</a>
+									
+							    </li>
 
 					            <li class="nav-item dropdown mx-lg-2">
 					               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
