@@ -1,9 +1,8 @@
 
 from django.urls import path, include
-from blog import views
+from . views import CampaignView,CampaignDetailView
 
 urlpatterns = [
-    path('campaignhome/',views.campaignhome, name='campaignhome'),
-    path('createcampaign/',views.createcampaign, name='createcampaign'),
-    path('<str:slug>/',views.campaignpost, name='campaignpost'),
+    path('campaignhome/',CampaignView.as_view(),name="campaignhome"),
+    path('<slug:slug>/', CampaignDetailView.as_view(), name='campaigndetail'),
 ]
