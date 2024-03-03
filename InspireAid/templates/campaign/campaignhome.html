@@ -10,10 +10,8 @@
 
 {% block body %}
 
-
-
 <div class="container mb-4" style="margin-top: 8%;">
- 
+
     <div class="row text-header text-center" style="margin-bottom: 50px;">
         <div class="col-12 section-intro">
             <h1 style="color: #2BAE66;font-size: 42px; font-weight: 700;line-height: 48px; padding-bottom: 8px;"> Our Campaigns</h1>
@@ -27,28 +25,46 @@
     </div>
 
     <div class="row">
-        {% for post in object_list %}
-            <div class="col-md-6 mb-2 mt-4">
-                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                    <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-primary-emphasis">Article by {{post.created_at}}</strong>
-                        <h3 class="mb-0">{{post.title}}</h3>
-                        <div class="mb-1 text-body-secondary">{{ post.target_amount}}</div>
-                        <p class="card-text mb-auto">{{post.description| truncatechars:40}}</p>
-                        <div class="mt-3">
-                            <a href="/campaign/{{post.slug}}" role="button" class="btn btn-success">Continue reading</a>
-                        </div>
-                    </div>
-                    <div class="col-auto d-none d-lg-block">
-                        <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+        <div class="col-md-12 mb-2 mt-4">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <strong class="d-inline-block mb-2 text-primary-emphasis">Article by {{ object_list.0.created_at }}</strong>
+                    <h3 class="mb-0">{{ object_list.0.title }}</h3>
+                    <div class="mb-1 text-body-secondary">{{ object_list.0.target_amount }}</div>
+                    <p class="card-text mb-auto">{{ object_list.0.description|truncatechars:40 }}</p>
+                    <div class="mt-3">
+                        <a href="/campaign/{{ object_list.0.slug }}" role="button" class="btn btn-success">Continue reading</a>
                     </div>
                 </div>
+                <div class="col-auto d-none d-lg-block">
+                    <svg class="bd-placeholder-img" width="400" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                </div>
             </div>
-        {% endfor %}
+        </div>
+
+        <div class="row">
+            {% for post in object_list|slice:"1:" %}
+                <div class="col-md-6 mb-2 mt-4">
+                    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                        <div class="col p-4 d-flex flex-column position-static">
+                            <strong class="d-inline-block mb-2 text-primary-emphasis">Article by {{post.author}}</strong>
+                            <h3 class="mb-0">{{post.title}}</h3>
+                            <div class="mb-1 text-body-secondary">{{ post.target_amount }}</div>
+                            <p class="card-text mb-auto">{{post.description| truncatechars:300}}</p>
+                            <div class="mt-3">
+                                <a href="/campaign/{{ object_list.0.slug }}" role="button" class="btn btn-success">Continue reading</a>
+                            </div>
+                        </div>
+                        <div class="col-auto d-none d-lg-block">
+                            <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+                
+        </div>
+      
     </div>
-
 </div>
-
-
 
 {% endblock body %}

@@ -1,1 +1,167 @@
-<h1>this is campaign page</h1
+{% extends "base.html" %}
+
+{% block title %}campaign details{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'campaignPost.css' %}">
+    <style>
+        
+        .recommended-campaigns {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .recommended-campaign {
+            width: calc(33.33% - 10px); 
+            margin-bottom: 20px;
+        }
+
+        
+        .campaign-detail {
+            margin-top: 8%;
+        }
+
+        .campaign-detail .p-md-5 {
+            background-color: #343a40;
+            color: #ffffff;
+            border-radius: 10px;
+        }
+
+        .campaign-detail h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #2BAE66;
+        }
+
+        .campaign-detail p {
+            font-size: 1.25rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--gray-1);
+        }
+
+        .campaign-detail .recommended-campaign img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .campaign-detail .blog-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .campaign-detail .blog-box .card-body {
+            padding: 20px;
+        }
+
+        .campaign-detail .blog-box h4 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2BAE66;
+        }
+
+        .campaign-detail .blog-box h5 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2BAE66;
+        }
+
+        .campaign-detail .blog-box .blog-desc {
+            margin-top: 20px;
+            font-size: 1.25rem;
+            color: var(--gray-1);
+        }
+
+        .campaign-detail .blog-box .btn-group {
+            margin-top: 20px;
+        }
+
+        
+        .btn-group .btn {
+            width: 100%; 
+            margin-bottom: 10px; 
+        }
+    </style>
+{% endblock extrastyles %}
+
+{% block body %}
+<div style="margin-top: 8%;">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade show" role="alert">
+            <strong>Message:</strong> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor%}
+    </div>
+{% endif %}
+<div class="p-4 p-md-5 mb-4 text-white bg-dark rounded " >
+
+    <div class="col-md-6 px-0">
+        <h1 class="display-4 fst-italic"> Cool feature campaign post</h1>
+        <p class="lead my-3">lorem djcbdj jjbchdb chbdhcv jcbdh jcdhbc jcbdjcb</p>
+        <p class="lead mb-0">
+            <a href="#" class="text-white fw-bold"></a>
+        </p>
+    </div>
+</div>
+</div>
+
+<!-- Recommended Campaigns Grid -->
+<div class="recommended-campaigns">
+    {% for recommended_campaign in recommended_campaigns %}
+        <div class="recommended-campaign">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <strong class="d-inline-block mb-2 text-primary-emphasis">Article by {{post.author}}</strong>
+                    <h3 class="mb-0">{{recommended_campaign.title}}</h3>
+                    <div class="mb-1 text-body-secondary">{{ recommended_campaign.target_amount }}</div>
+                    <p class="card-text mb-auto">{{recommended_campaign.description| truncatechars:50}}</p>
+                    <div class="mt-3">
+                        <a href="/campaign/{{ recommended_campaign.slug }}" role="button" class="btn btn-success">Continue reading</a>
+                    </div>
+                </div>
+                <div class="col-auto d-none d-lg-block">
+                    <svg class="bd-placeholder-img" width="180" height="280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Campaign Details Section -->
+<section class="blog-section blog-detail ">
+    <div class="container">
+        <div class="row ">
+            <div class="col-xl-11 mx-auto">
+                <div class="card blog-box">
+                    <img src="#" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h4 class="card-title">{{object.title}}</h4>
+                        <h5 class="card-title">{{object.target_amount}}</h5>
+                        <div class="blog-desc">
+                            <p class="card-text">{{object.description}}</p>
+                        </div>
+                        <div class="btn-group">
+                            <a href="#" class="btn btn-danger me-2 rounded">Delete</a>
+                            <a href="#" class="btn btn-danger me-2 rounded">Edit</a>
+                            <a href="#" class="btn btn-success rounded">Donate</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Increase the space between the footer and the box -->
+<div style="margin-bottom: 50px;"></div>
+</div>
+{% endblock body %}
