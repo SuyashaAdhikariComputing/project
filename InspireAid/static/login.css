@@ -1,0 +1,88 @@
+
+
+body{
+	background-color: #2BAE66;
+}
+
+.custom-button{
+	color: whitesmoke;
+	background-color:#2BAE66 ;
+	transition: transform 0.2s;
+}
+
+.custom-button:hover {
+      transform: scale(1.1); /* Increase the size by 10% on hover */
+      background-color:#2BAE66 ;
+      color: whitesmoke;
+    }
+
+.custom-text{
+	color: #2BAE66 ;
+}
+
+.wrapper .logo{
+	max-width: 65%;
+    margin-top: 10%;
+    margin-bottom: 10%;
+    margin-left: 15%;
+}
+
+.wrapper .password-info{
+	font-size: 8px;
+}
+
+.img_height{
+	height: 20px;
+}
+
+.wrapper{
+	margin-top: 20%;
+}
+
+
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #2BAE66;
+}
+
+
+
+.center-container{
+	
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    
+}
+
+.main button{
+	width: 27%;
+	padding-top: 1%;
+	padding-bottom: 1%;
+	margin-top: 5%;
+
+}
+
+.main button:hover{
+
+transform: scale(1.1);
+
+}
+
+.form-floating {
+    margin-bottom: 20px; /* Increase the bottom margin between form fields */
+}
+
+.form-floating select,
+.form-floating input {
+        width: 100%; /* Set the width to 100% for a full-width box */
+        max-width: 400px; /* Adjust the maximum width as needed */
+        padding: 20px;
+        border: 2px solid #808080;
+        border-radius: 8px;
+        background-color: whitesmoke;
+        z-index: 1;
+        transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+}

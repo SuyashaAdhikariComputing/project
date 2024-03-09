@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'signup.css' %}">
+
+{% endblock extrastyles %}
+
+{% block body %}
+
+<section class="wrapper mb-5 "style="margin-top:15%; ">
+    <div class="container">
+        <div class="col-sm-12 col-lg-4 offset-lg-3 col-xl-4 offset-xl-4 text-center">
+            
+            <form action="{% url 'signup' %}" method="post" class="rounded-2 shadow p-5 mt-1" style="background-color: #FCF6F5;">
+                
+                {%csrf_token %}
+
+                <h3 class="text-dark fw-bolder fs-4 mb-2"> Create an account</h3>
+
+                <div class="fw-normal mb-2">
+                    Already have a account?  <a href="login.html" class="custom-text fw-bold text-decoration-none">SignIn</a>
+                </div>
+
+                <div class="text-center text-muted text-uppercase mb-2">OR</div>
+
+                <a href="#" class="btn btn-light login_with w-100 mb-3 ">
+                    <img src="{% static 'google.png' %}" class="img-fluid me-4 img_height"> SignIn with google
+                </a>
+
+                
+                
+                
+                {% for field in signup_form %}
+                    <div class="form-floating mb-3">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                    </div>
+               {% endfor %} 
+
+               
+                <button type="submit" class="btn custom-button submit_btn w-100 my-4" value="Submit">Sign up</button>
+
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock body %}

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}editprofile{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
+
+    <style>
+        .form-floating {
+            margin-top: 20px;
+        }
+
+        .form-floating label {
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            right: 20px;
+            padding: 15px;
+            pointer-events: none;
+            color: #6C757D;
+            font-size: 16px;
+        }
+
+        .form-floating select,
+        .form-floating input {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border: 2px solid #808080;
+            border-radius: 8px;
+            background-color: whitesmoke;
+            z-index: 1;
+            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+        }
+
+        
+        .form-floating .field1,
+        .form-floating .field2 {
+            height: 150px;
+            width: 350px; 
+        }
+
+        
+        .form-floating .field3 {
+            left: -20; 
+            border: 2px solid #808080; 
+            border-radius: 8px;
+            
+            
+        }
+    </style>
+    
+{% endblock extrastyles %}
+
+{% block body %}
+
+<section class="wrapper">
+    <div class="container">
+        <div class="col-sm-12 col-lg-4 offset-lg-3 col-xl-4 offset-xl-4 text-center">
+            
+            <form action="{% url 'edit_profile' %}" method="post" class="rounded-2 shadow p-5 mt-1" style="background-color: #FCF6F5;">
+                {%csrf_token %}
+                <div class="logo">
+                <img src="{% static 'logo.png' %}" class="img-fluid" alt="logo">
+                </div>
+                <h3 class="text-dark fw-bolder fs-4 mb-2"> Edit Profile</h3>
+                <div class="fw-normal mb-5">
+                    Do not Want to ?  <a href="signup.html" class="custom-text fw-bold text-decoration-none">Go Back</a>
+                </div>
+
+                {% for field in edit_form %}
+                    <div class="form-floating mb-5">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                    </div>
+               {% endfor %} 
+
+                
+                <button type="submit" class="btn custom-button submit_btn w-100 my-4">Edit</button>
+                
+
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock body %}

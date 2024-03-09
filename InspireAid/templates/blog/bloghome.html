@@ -42,7 +42,7 @@
                         <strong class="d-inline-block mb-2 text-primary-emphasis">Article by {{post.author}}</strong>
                         <h3 class="mb-0">{{post.title}}</h3>
                         <div class="mb-1 text-body-secondary">{{ post.timestamp|date:"F j, Y H:i" }}</div>
-                        <p class="card-text mb-auto">{{post.content| truncatechars:300}}</p>
+                        <p class="card-text mb-auto">{{post.content| truncatechars:50}}</p>
                         <div class="mt-3">
                             <a href="/blog/{{post.slug}}" role="button" class="btn btn-success">Continue reading</a>
                         </div>
