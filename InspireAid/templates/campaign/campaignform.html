@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Campaign form{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'blogform.css' %}">
+{% endblock extrastyles %}
+
+{% block body %}
+<section class="wrapper mt-2">
+    <div class="container" style="margin-top: 8%; margin-bottom:8%;">
+        <div class="col-sm-12 col-lg-6 offset-lg-3 text-center">
+            <form method="post" action="{% if campaign %}{% url 'campaignedit' slug=campaign.slug%}{% else %}{% url 'postcampaign' %}{% endif %}" class="rounded-2 shadow p-5 mt-5" style="background-color: #FCF6F5; height: 600px;">
+
+
+                {% csrf_token %}
+                    {% if campaign %}
+                       <h3 class="card-title text-center mb-4">Edit Campaign</h3>
+                    {% else %}
+
+                        <h3 class="card-title text-center mb-4">Create a New Campaign</h3>
+
+                    {% endif %}
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name='title' id="postTitle" placeholder="Campaign Title" value="{% if campaign %}{{ campaign.title}}{% endif %}" >
+                    <label for="postTitle">Campaign Title</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <textarea class="form-control" name='content' id="postContent" rows="15" placeholder="Write your campaign content here" style="height: 200px;">{% if campaign %}{{ campaign.description }}{% endif %}</textarea>
+                    <label for="postContent">Campaign Content</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name='amount' id="amount" placeholder="Target Amount" value="{% if campaign %}{{ campaign.target_amount }}{% endif %}" >
+                    <label for="postTitle">Target Amount</label>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 my-4">
+                    {% if campaign %}
+                        Update Campaign
+                    {% else %}
+                        Start Campaign
+                    {% endif %}
+                     
+                </button>
+
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock body %}
