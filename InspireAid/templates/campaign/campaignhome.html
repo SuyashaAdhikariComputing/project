@@ -19,7 +19,13 @@
         </div>
 
         <div class="col-12">
-            <a href="{% url 'postcampaign' %}" class="btn btn-success">Create Campaign</a>
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'postcampaign' %}" class="btn btn-success">Create Campaign</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-success ">Create Campaign</a>
+            {% endif %}
+
         </div>
 
     </div>

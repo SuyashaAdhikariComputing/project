@@ -1,12 +1,13 @@
 from django.db import models
 from django.utils.text import slugify
+from users.models import CustomUser as User
 # Create your models here.
 
 class Post(models.Model):
     sno = models.AutoField(primary_key=True)
     title=models.CharField(max_length=255)
     content=models.TextField()
-    author=models.CharField(max_length=13)
+    author=models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
     slug=models.CharField(max_length=130,unique=True, blank=True)
     timestamp=models.DateTimeField(auto_now_add=True, blank=True)
 

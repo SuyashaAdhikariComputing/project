@@ -14,9 +14,12 @@
     <div class="container d-flex align-items-center justify-content-center fs-1 text-white flex-column center-container">
         
         <h1>Your Giving Their Hope</h1>
-        <button type="button" class="btn btn-success rounded-pill">
-             Start Support Fund
-        </button>
+        
+        {% if user.is_authenticated %}
+            <a href="{% url 'postcampaign' %}" class="btn btn-success rounded-pill">Start Support Fund</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-success rounded-pill">Start Support Fund</a>
+        {% endif %}
 
     </div>
 

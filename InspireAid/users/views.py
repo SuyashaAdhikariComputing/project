@@ -29,7 +29,7 @@ def user_login(request):
             
             if user is not None:
                 auth_login(request, user)
-                return redirect('profile')  # Redirect to profile on successful login
+                return redirect('home')  # Redirect to profile on successful login
 
     return render(request, 'user/login.html', {'login_form': login_form})
 

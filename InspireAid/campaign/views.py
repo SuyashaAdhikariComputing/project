@@ -43,7 +43,8 @@ class CampaignPostView(View):
         campaign = Campaign.objects.create(
             title=title,
             description=description,
-            target_amount=target_amount
+            target_amount=target_amount,
+            author=request.user
         )
 
         # Redirect to success URL
@@ -62,6 +63,7 @@ class CampaignEditView(View):
         campaign.title = request.POST.get('title')
         campaign.description = request.POST.get('content')
         campaign.target_amount = request.POST.get('amount')
+        campaign.author=request.user
         campaign.save()
 
         return redirect('/campaign/campaignhome/')

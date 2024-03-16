@@ -145,14 +145,23 @@
                     <img src="#" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h4 class="card-title">{{object.title}}</h4>
+                        <h4 class="card-title">{{object.author}}</h4>
                         <h5 class="card-title">{{object.target_amount}}</h5>
                         <div class="blog-desc">
                             <p class="card-text">{{object.description}}</p>
                         </div>
                         <div class="btn-group m">
-                            <a href="#" class="btn btn-danger me-2 rounded" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
-                            <a href="{% url 'campaignedit' slug=campaign.slug %}" class="btn btn-danger me-2 rounded">Edit</a>
-                            <a href="#" class="btn btn-success rounded">Donate</a>
+                            {% if user.is_staff or user == object.author %}
+                                <a href="#" class="btn btn-danger me-2 rounded" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+                            {% endif %}
+
+                            {% if user == object.author %}
+                                <a href="{% url 'campaignedit' slug=object.slug %}" class="btn btn-danger me-2 rounded">Edit</a>
+                            {% endif %}
+
+                            <a href="{% url 'campaignedit' slug=object.slug %}" class="btn btn-success me-2 rounded">donate</a>
+
+
                         </div>
                     </div>
                 </div>

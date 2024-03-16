@@ -1,20 +1,98 @@
-<!-- profile.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-</head>
-<body>
-    <h2>User Profile</h2>
-    <p>Username: {{ user.username }}</p>
-    <p>bio: {{ user.bio }}</p>
-    <p>Email: {{ user.email }}</p>
-    <a href="{% url 'edit_profile' %}"><button>Edit Profile</button></a>
-    <!-- Add other user profile information as needed -->
-    <a href="{% url 'change_password' %}"><button>Change Password</button></a>
-    <a href="{% url 'logout' %}"><button>Logout</button></a>
+
+
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}">
+
+    <style>
+        
+        .table {
+            margin-left:50px;
+            width: 90%; 
+            margin-top: 0; 
+        }
+        .table th {
+            background-color: #f8f9fa; 
+        }
+        .table td, .table th {
+            border: 2px solid ; 
+            padding: 20px; 
+        }
+
+        .btn-container {
+            margin-top: 30px; 
+        }
+        .btn-container a {
+            margin-right: 10px; }
+
+        .btn-container a.btn:hover {
+            background-color: green; 
+        }
+    </style>
     
-</body>
-</html> 
+{% endblock extrastyles %}
+
+{% block body %}
+
+    {% comment %} <h2>User Profile</h2>
+        <p>Username: {{ user.username }}</p>
+        <p>bio: {{ user.bio }}</p>
+        <p>Email: {{ user.email }}</p>
+        <a href="{% url 'edit_profile' %}"><button>Edit Profile</button></a>
+        <!-- Add other user profile information as needed -->
+        <a href="{% url 'change_password' %}"><button>Change Password</button></a>
+        <a href="{% url 'logout' %}"><button>Logout</button></a> {% endcomment %}
+
+        <div class="header__wrapper">
+            <header></header>
+            <div class="cols__container">
+                <div class="left__col">
+                    <div class="image__container">
+                        <img src="{% static 'logo.png' %}" alt="profileimage">
+                        <span></span>
+                    </div>
+                   
+                    <div class="btn-container row">
+                        <div class="col-md-12 mb-2">
+                            <a href="{% url 'edit_profile' %}" class="btn btn-success btn-block">Edit Profile</a>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <a href="{% url 'change_password' %}" class="btn btn-success btn-block">Change Password</a>
+                        </div>
+                        <div class="col-md-12 ">
+                            <a href="{% url 'change_password' %}" class="btn btn-success btn-block">Add Photo</a>
+                        </div>
+                    </div>
+                
+                </div>
+               <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><strong>Username</strong></td>
+                                <td>{{ user.username }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bio</strong></td>
+                                <td>{{ user.bio }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email</strong></td>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            
+                            
+                        </tbody>
+                    </table>
+
+            </div>
+            </div>
+
+        </div>
+        
+{% endblock body %}

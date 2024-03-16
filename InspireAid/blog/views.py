@@ -12,11 +12,11 @@ def bloghome(request):
 
 def postcontent(request):
     if request.method=="POST":
-        author=request.POST['author']
+        
         title=request.POST['title']
         content=request.POST['content'] 
-        print(author, title, content)
-        blog_post=Post(title=title, content=content, author=author)
+        
+        blog_post=Post(title=title, content=content, author=request.user)
         blog_post.save()
         messages.success(request, "sucessfully Posted")
         return redirect('bloghome')
@@ -31,11 +31,11 @@ def edit_post(request, slug):
     post = get_object_or_404(Post, slug=slug)
 
     if request.method == "POST":
-        author = request.POST['author']
+        
         title = request.POST['title']
         content = request.POST['content'] 
 
-        post.author = author
+        post.author = request.user
         post.title = title
         post.content = content
         post.save()

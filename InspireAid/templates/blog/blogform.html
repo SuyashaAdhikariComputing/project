@@ -24,11 +24,6 @@
                 {% endif %}
 
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" name='author' id="author" placeholder="Author" value="{% if post %}{{ post.author }}{% endif %}">
-                    <label for="author">Author</label>
-                </div>
-
-                <div class="form-floating mb-3">
                     <input type="text" class="form-control" name='title' id="postTitle" placeholder="Blog Post Title" value="{% if post %}{{ post.title }}{% endif %}">
                     <label for="postTitle">Blog Post Title</label>
                 </div>
