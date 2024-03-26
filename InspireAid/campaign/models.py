@@ -25,6 +25,16 @@ class Campaign(models.Model):
             self.author = User.objects.last()
         super().save(*args, **kwargs)
 
+class CampaignComment(models.Model):
+    sno=models.AutoField(primary_key= True)
+    comment = models.TextField()
+    comment_author = models.ForeignKey(User, on_delete=models.CASCADE)
+    campaign_post = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='comments')
+    date = models.DateTimeField(auto_now_add=True, blank=True)
+    parent=models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.comment[0:13]+"...."+"by "+ self.comment_author.first_name
 
 class Donation(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='donations')

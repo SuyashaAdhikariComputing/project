@@ -194,5 +194,53 @@
 
 </div>
 
+<div class="container my-4 " style="margin-left: 5%; overflow-x: hidden;">
+    <h2 class="mt-5 mb-4">Comments ({{comments.count}})</h2>
+    <div class="my-2">
+        {% if user.is_authenticated%}
+
+         <form action= "/campaign/postcampaigncomment/" method="POST">
+            {%csrf_token%}
+            
+        
+            <div class="mb-3">
+              
+              <input type="text" class="form-control" name="comment" placeholder="Enter comment here" style="width:90%;">
+              
+            </div>
+    
+    
+            <input type="hidden" name="campaignid" value={{object.id}} >
+            <button type="submit" class="btn btn-primary mb-4 mt-2">Submit</button>
+    
+          </form>
+
+        {%else%}
+        <p>Login to post comment</p>
+        {%endif%}
+    </div>
+    
+
+      {% for comment in campaign_comments %}
+
+        <div class="row my-3">
+
+            <div class="col-md-1">
+                <img class="rounded mx-auto d-block w-100 p-2" src="/static/image/user.png" alt="user">
+            </div>
+            <div class="col-md-11">
+                <b>{{comment.comment_author.username}}</b> at {{comment.date}}
+                <div>{{comment.comment}}</div>
+            </div>
+
+        </div>
+
+
+      {% endfor %}
+
+
+
+</div>
+
 
 {% endblock body %}

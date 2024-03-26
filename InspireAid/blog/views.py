@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render, HttpResponse
-from blog.models import Post
+from blog.models import Post,BlogComment
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 # Create your views here.
@@ -24,7 +24,8 @@ def postcontent(request):
 
 def blogpost(request, slug):
     post= Post.objects.filter (slug=slug).first()
-    context={'post': post}
+    comments=BlogComment.objects.filter(Blog_post=post)
+    context={'post': post, 'comments':comments}
     return render(request,'blog/blogPost.html',context)
 
 def edit_post(request, slug):
@@ -46,7 +47,22 @@ def edit_post(request, slug):
     return render(request, 'blog/blogform.html', context)
 
 def deleteblog(request, slug):
+
     post = get_object_or_404(Post, slug=slug)
     post.delete()
     messages.success(request, "sucessfully deleted")
     return redirect('bloghome')
+
+def postcomment(request):
+    if request.method == 'POST':
+        
+        comment = request.POST.get("comment")
+        comment_author = request.user
+        postSno = request.POST.get("postSno")
+        post=get_object_or_404(Post, sno=postSno)
+
+        comment= BlogComment(comment=comment, comment_author=comment_author, Blog_post=post)
+        comment.save()
+        messages.success(request, "Your Comment has been posted sucessfully")
+    
+        return redirect('blogpost', slug=post.slug)

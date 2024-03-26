@@ -1,13 +1,13 @@
 
 import json
 from .models import Donation
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy,reverse
 from django.views.generic import ListView, DetailView, View, DeleteView
 import requests
 import urllib3
-from .models import Campaign
+from .models import Campaign,CampaignComment
 # Create your views here.
 
 class CampaignView(ListView):
@@ -27,7 +27,10 @@ class CampaignDetailView(DetailView):
         # Get three recommended campaigns (you may customize this logic based on your requirements)
         recommended_campaigns = Campaign.objects.exclude(pk=current_campaign.pk)[:3]
 
+        campaign_comments = CampaignComment.objects.filter(campaign_post=current_campaign.pk)
+
         context['recommended_campaigns'] = recommended_campaigns
+        context['campaign_comments'] = campaign_comments
         return context
     
 class CampaignPostView(View):
@@ -42,7 +45,7 @@ class CampaignPostView(View):
         title = request.POST.get('title')
         description = request.POST.get('content')
         target_amount = request.POST.get('amount')
-
+        
         # Create Campaign object
         campaign = Campaign.objects.create(
             title=title,
@@ -87,6 +90,19 @@ class DonateFormView(View):
         context = {'campaign': campaign}
         return render(request, self.template_name, context)
     
+def postcampaigncomment(request):
+    if request.method == 'POST':
+        
+        comment = request.POST.get("comment")
+        comment_author = request.user
+        postSno = request.POST.get("campaignid")
+        post=get_object_or_404(Campaign, pk=postSno)
+
+        comment= CampaignComment(comment=comment, comment_author=comment_author, campaign_post=post)
+        comment.save()
+        messages.success(request, "Your Comment has been posted sucessfully")
+    
+        return redirect('campaigndetail', slug=post.slug)
 
 
 def initiatekhalti(request):

@@ -66,6 +66,8 @@
                                 
                                 
                             </div>
+
+
     
     
                         {% endif %}
@@ -87,6 +89,7 @@
 
     </div>
 </section>
+
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -103,6 +106,54 @@
         </div>
       </div>
     </div>
+</div>
+
+<div class="container my-4 " style="margin-left: 5%; overflow-x: hidden;">
+    <h2 class="mt-5 mb-4">Comments ({{comments.count}})</h2>
+    <div class="my-2">
+        {% if user.is_authenticated%}
+
+         <form action= "/blog/postcomment/" method="POST">
+            {%csrf_token%}
+            
+        
+            <div class="mb-3">
+              
+              <input type="text" class="form-control" name="comment" placeholder="Enter comment here" style="width:90%;">
+              
+            </div>
+    
+    
+            <input type="hidden" name="postSno" value={{post.sno}} >
+            <button type="submit" class="btn btn-primary mb-4 mt-2">Submit</button>
+    
+          </form>
+
+        {%else%}
+        <p>Login to post comment</p>
+        {%endif%}
+    </div>
+    
+
+      {% for comment in comments %}
+
+        <div class="row my-3">
+
+            <div class="col-md-1">
+                <img class="rounded mx-auto d-block w-100 p-2" src="/static/image/user.png" alt="user">
+            </div>
+            <div class="col-md-11">
+                <b>{{comment.comment_author.username}}</b> at {{comment.date}}
+                <div>{{comment.comment}}</div>
+            </div>
+
+        </div>
+
+
+      {% endfor %}
+
+
+
 </div>
 
 {% endblock body %}
