@@ -71,18 +71,4 @@ transform: scale(1.1);
 
 }
 
-.form-floating {
-    margin-bottom: 20px; /* Increase the bottom margin between form fields */
-}
 
-.form-floating select,
-.form-floating input {
-        width: 100%; /* Set the width to 100% for a full-width box */
-        max-width: 400px; /* Adjust the maximum width as needed */
-        padding: 20px;
-        border: 2px solid #808080;
-        border-radius: 8px;
-        background-color: whitesmoke;
-        z-index: 1;
-        transition: border-color 0.3s, background-color 0.3s, color 0.3s;
-}

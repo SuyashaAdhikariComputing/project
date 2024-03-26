@@ -1,8 +1,12 @@
 
+import json
+from .models import Donation
 from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from django.views.generic import ListView, DetailView, View, DeleteView
+import requests
+import urllib3
 from .models import Campaign
 # Create your views here.
 
@@ -74,3 +78,93 @@ def deletecampaign(request, slug):
     campaign.delete()
     
     return redirect('campaignhome')
+
+class DonateFormView(View):
+    template_name = 'donation/detailform.html'
+
+    def get(self, request, slug, *args, **kwargs):
+        campaign = get_object_or_404(Campaign, slug=slug)
+        context = {'campaign': campaign}
+        return render(request, self.template_name, context)
+    
+
+
+def initiatekhalti(request):
+    
+    url = "https://a.khalti.com/api/v2/epayment/initiate/"
+
+    purchase_order_id=request.POST.get('campaign_id')
+    amount=request.POST.get('amount')
+    return_url=request.POST.get('return_url')
+
+    #print("campaign_id",purchase_order_id)
+    #print("amount",amount)
+    #print("return_url",return_url)
+
+    user=request.user
+
+    payload = json.dumps({
+        "return_url": return_url,
+        "website_url": "https://127.0.0.1:8000/",
+        "amount": amount,
+        "purchase_order_id": purchase_order_id ,
+        "purchase_order_name": "test",
+        "customer_info": {
+        "name": user.first_name,
+        "email": user.email,
+        "phone": user.phone
+        }
+    })
+    headers = {
+        'Authorization': 'key bc5f23918f7c47d49e5316a4550258ea',
+        'Content-Type': 'application/json',
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    print(response.text)
+    new_res=json.loads(response.text)
+    print(new_res)
+
+    return redirect(new_res['payment_url'])
+
+def verifykhalti(request):
+    
+
+    url = "https://a.khalti.com/api/v2/epayment/lookup/"
+
+    if request.method == 'GET':
+
+          headers = {
+         'Authorization': 'key bc5f23918f7c47d49e5316a4550258ea',
+         'Content-Type': 'application/json',
+         }
+
+          pidx= request.GET.get('pidx')
+          campaign_id= request.GET.get('purchase_order_id')
+          amount= request.GET.get('amount')
+
+          data=json.dumps({
+             'pidx':pidx
+          })
+
+          res = requests.request("POST", url, headers=headers, data=data)
+          print(res)
+          print(res.text)
+
+          new_res=json.loads(res.text)
+          print(new_res)
+         
+          
+    
+          if new_res['status']== 'Completed':
+              donation = Donation.objects.create(
+                 campaign_id=campaign_id,
+                 user_id=request.user.id,
+                 amount=amount
+              )
+
+              donation.save()
+         
+          return redirect(reverse('campaignhome'))
+        

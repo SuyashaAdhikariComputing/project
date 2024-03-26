@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'contact.css' %}">
+{% endblock extrastyles %}
+
+{% block body %}
+
+<div class="container mb-5" style="margin-top: 10%;" >
+    
+<form action="{% url 'initiatekhalti' %}" method="POST">
+    {%csrf_token%}
+    <input type="hidden" name="campaign_id" value="{{ campaign.id }}">
+    <input type="text" class="form-control" name="amount" placeholder="Enter amount as paisa">
+    <input type="hidden" name="return_url" value="http://127.0.0.1:8000/campaign/verifykhalti/">
+    <button type="submit" class="btn btn-danger">Pay with Khalti</button>
+</form>
+</div>
+
+{% endblock body %}

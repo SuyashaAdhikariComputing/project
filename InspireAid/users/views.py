@@ -1,7 +1,10 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login as auth_login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
+from users.models import CustomUser as User
+from blog.models import Post
+from campaign.models import Campaign
 
 from .forms import SignUpForm,LoginForm,PasswordChangeForm,EditProfileForm  # Import your Form
 # Create your views here.
@@ -68,3 +71,30 @@ def edit_profile(request):
          edit_form = EditProfileForm(instance=user)
 
      return render(request, 'user/editprofile.html', {'edit_form': edit_form})
+
+
+def all_user_view(request):
+    if request.user.is_authenticated and request.user.role == 'employee':
+        users = User.objects.all()
+        donor_count = User.objects.filter(role='donor').count()
+        organization_count = User.objects.filter(role='organization').count()
+        total_blog_posts = Post.objects.all().count()
+        total_campaign_posts = Campaign.objects.all().count()
+        return render(request, 'admin/alluser.html', {
+            'users': users, 
+            'donor_count': donor_count, 
+            'organization_count': organization_count,
+            'total_blog_posts': total_blog_posts,
+            'total_campaign_posts': total_campaign_posts,
+            })
+        
+    else:
+        
+        return redirect('login')
+    
+def user_profile(request, user_id):
+    # Fetch the user object based on the provided user_id
+    user = get_object_or_404(User, id=user_id)
+    
+    # Render the user profile template with the user object
+    return render(request, 'user/profile.html', {'user': user, 'current_user': request.user})

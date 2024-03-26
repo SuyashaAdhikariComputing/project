@@ -1,11 +1,15 @@
 
 from django.urls import path, include
-from . views import CampaignView,CampaignDetailView, CampaignPostView,CampaignEditView
+from . views import CampaignView,CampaignDetailView, CampaignPostView,CampaignEditView,DonateFormView
 from campaign import views
 urlpatterns = [
     path('campaignhome/',CampaignView.as_view(),name="campaignhome"),
     path('createcampaign/',CampaignPostView.as_view(), name='postcampaign'),
+    path('initiatekhalti/', views.initiatekhalti, name='initiatekhalti'),
+     path('verifykhalti/', views.verifykhalti, name='verifykhalti'),
     path('<slug:slug>/', CampaignDetailView.as_view(), name='campaigndetail'),
     path('editcampaign/<slug:slug>/', CampaignEditView.as_view(), name='campaignedit'),
     path('deletecampaign/<slug:slug>/', views.deletecampaign, name='campaigndelete'),
+    path('<slug:slug>/donate/', DonateFormView.as_view(), name='donate'), 
+    #path('<slug:slug>/donate/process/', DonateProcessView.as_view(), name='donate_process'),
 ]

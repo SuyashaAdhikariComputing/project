@@ -1,3 +1,5 @@
+
+import uuid
 from django.db import models
 from django.utils.text import slugify
 from users.models import CustomUser as User
@@ -14,6 +16,7 @@ class Campaign(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='campaigns', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     slug=models.CharField(max_length=130,unique=True, blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -21,6 +24,16 @@ class Campaign(models.Model):
         if not self.author_id:
             self.author = User.objects.last()
         super().save(*args, **kwargs)
+
+
+class Donation(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='donations')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Donation of {self.amount} to {self.campaign.title} by {self.user.username} on {self.date}"
 
     
 
