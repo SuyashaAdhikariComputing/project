@@ -39,3 +39,6 @@ class EditProfileForm(forms.ModelForm):
      class Meta:
          model = CustomUser
          fields = ['username', 'phone', 'bio']
+
+class VerificationForm(forms.Form):
+    otp = forms.CharField(label='Write You OTP', max_length=10)

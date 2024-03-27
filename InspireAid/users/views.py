@@ -5,20 +5,101 @@ from django.contrib.auth import logout as auth_logout
 from users.models import CustomUser as User
 from blog.models import Post
 from campaign.models import Campaign
-
-from .forms import SignUpForm,LoginForm,PasswordChangeForm,EditProfileForm  # Import your Form
+from django.core.mail import send_mail
+from users.models import OTPModel
+from .forms import SignUpForm,LoginForm,PasswordChangeForm,EditProfileForm,VerificationForm  # Import your Form
 # Create your views here.
+from django.contrib import messages
+import random
+from django.conf import settings
+
+def otp_generation():
+    return str(random.randint(100000, 999999))
+
+
+def send_email(email, otp):
+    title = 'Email Verification OTP'
+    content = f'The OTP for mail verification is: {otp}'
+    email_from = settings.EMAIL_HOST_USER 
+    reciever=[email] 
+    send_mail(title, content, email_from, reciever)
 
 def signup(request):
-    signup_form = SignUpForm(request.POST or None) 
     if request.method == 'POST':
+        signup_form = SignUpForm(request.POST)
+
+        if signup_form.is_valid():
+            username = signup_form.cleaned_data['username']
+            email = signup_form.cleaned_data['email']
+            phone = signup_form.cleaned_data['phone']
+
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already taken.')
+
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, 'This email already have account')
+
+            elif User.objects.filter(phone=phone).exists():
+                messages.error(request, 'This phone number is already registered')
+
+            else:
+                otp = otp_generation()
+                user = signup_form.save(commit=False)
+                user.is_active = False
+                user.save()
+
+                otp_model = OTPModel(user=user, otp=otp)
+                otp_model.save()
+
+                send_email(email, otp)
+                
+                return redirect('verify_user_mail', email=email)
+        else:
+            messages.error(request, 'fill all fields ')
+    else:
+        signup_form = SignUpForm()
+    
+    return render(request, "user/signup.html", {'signup_form': signup_form})
+
+    # signup_form = SignUpForm(request.POST or None) 
+    # if request.method == 'POST':
          
-         if signup_form.is_valid():
-             signup_form.save()
-             return redirect('login')  # Redirect to login after successful registration
+    #      if signup_form.is_valid():
+    #          signup_form.save()
+    #          return redirect('login')  # Redirect to login after successful registration
 
      
-    return render(request, "user/signup.html", {'signup_form': signup_form})
+    # return render(request, "user/signup.html", {'signup_form': signup_form})
+
+def verify_user_mail(request, email):
+    if request.method == 'POST':
+        otp_form = VerificationForm(request.POST)
+        if otp_form.is_valid():
+            otp = otp_form.cleaned_data['otp']
+            try:
+                user = User.objects.get(email=email)
+                otp_model = OTPModel.objects.get(user=user)
+                if otp == otp_model.otp:
+                    otp_model.delete()
+                    user.is_active = True
+                    user.save()
+                    return redirect('login')
+                else:
+                    messages.ERROR(request, 'The otp is not correct')
+
+            except OTPModel.DoesNotExist:
+                messages.ERROR(request, 'OTP is not send')
+                
+            except User.DoesNotExist:
+                messages.ERROR(request, 'User with this email does not exist')
+
+
+    else:
+        otp_form = VerificationForm()
+
+    return render(request, "user/token.html",  {'otp_form': otp_form, 'email': email})
+
+
 
 def user_login(request):
     login_form = LoginForm()

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock title %}
+{% block title %}sign up{% endblock title %}
 
 {% block extrastyles %}
     {% load static %}
@@ -11,7 +11,10 @@
 
 {% block body %}
 
+
 <section class="wrapper mb-5 "style="margin-top:15%; ">
+
+    
     <div class="container">
         <div class="col-sm-12 col-lg-4 offset-lg-3 col-xl-4 offset-xl-4 text-center">
             
@@ -30,6 +33,8 @@
                 <a href="#" class="btn btn-light login_with w-100 mb-3 ">
                     <img src="{% static 'google.png' %}" class="img-fluid me-4 img_height"> SignIn with google
                 </a>
+
+                
                 
                 
                 {% for field in signup_form %}
@@ -46,5 +51,6 @@
         </div>
     </div>
 </section>
+
 
 {% endblock body %}
