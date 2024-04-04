@@ -140,18 +140,26 @@ def change_password(request):
 
 @login_required
 def edit_profile(request):
-     user = request.user
+    user = request.user
 
-     if request.method == 'POST':
-         edit_form = EditProfileForm(request.POST, instance=user)
+    if request.method == 'POST':
+        edit_form = EditProfileForm(request.POST, request.FILES, instance=user)  # Pass request.FILES for file data
         
-         if edit_form.is_valid():
-             edit_form.save()
-             return redirect('profile')
-     else:
-         edit_form = EditProfileForm(instance=user)
+        if edit_form.is_valid():
+            # Save the form without profile_picture field
+            edit_form.save(commit=False)
+            
+            # Handle profile_picture separately
+            profile_picture = request.FILES.get('profile_picture')
+            if profile_picture:
+                user.profile_picture = profile_picture
+                user.save()
 
-     return render(request, 'user/editprofile.html', {'edit_form': edit_form})
+            return redirect('profile')
+    else:
+        edit_form = EditProfileForm(instance=user)
+
+    return render(request, 'user/editprofile.html', {'edit_form': edit_form})
 
 
 def all_user_view(request):
@@ -173,9 +181,24 @@ def all_user_view(request):
         
         return redirect('login')
     
-def user_profile(request, user_id):
+def user_profile(request, user_id):#to get the user profile of the user by the employee
     # Fetch the user object based on the provided user_id
     user = get_object_or_404(User, id=user_id)
     
     # Render the user profile template with the user object
     return render(request, 'user/profile.html', {'user': user, 'current_user': request.user})
+
+@login_required
+def delete_user(request, user_id):
+    # Fetch the user object based on the provided user_id
+    user = get_object_or_404(User, id=user_id)
+    
+    # Check if the request method is POST
+    if request.method == 'POST':
+        # Delete the user
+        user.delete()
+        # Display a success message
+        messages.success(request, 'User deleted successfully.')
+    
+    # Redirect back to the user list page
+    return redirect('employee_user_list')

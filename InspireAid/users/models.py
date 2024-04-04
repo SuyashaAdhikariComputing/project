@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
     
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, blank=True, null=True)
     bio = models.TextField(blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
 
     def __str__(self):
         return self.username

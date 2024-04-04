@@ -25,11 +25,11 @@ class CampaignDetailView(DetailView):
         current_campaign = self.get_object()
 
         # Get three recommended campaigns (you may customize this logic based on your requirements)
-        recommended_campaigns = Campaign.objects.exclude(pk=current_campaign.pk)[:3]
+        
 
         campaign_comments = CampaignComment.objects.filter(campaign_post=current_campaign.pk)
 
-        context['recommended_campaigns'] = recommended_campaigns
+        
         context['campaign_comments'] = campaign_comments
         return context
     
@@ -45,12 +45,14 @@ class CampaignPostView(View):
         title = request.POST.get('title')
         description = request.POST.get('content')
         target_amount = request.POST.get('amount')
-        
+        image = request.FILES.get('image')
+
         # Create Campaign object
         campaign = Campaign.objects.create(
             title=title,
             description=description,
             target_amount=target_amount,
+            image=image,
             author=request.user
         )
 
@@ -71,9 +73,17 @@ class CampaignEditView(View):
         campaign.description = request.POST.get('content')
         campaign.target_amount = request.POST.get('amount')
         campaign.author=request.user
+        if 'image' in request.FILES:
+            # Delete the old image file from the storage
+            campaign.image.delete()
+
+            # Assign the new uploaded image
+            campaign.image = request.FILES['image']
+
+        
         campaign.save()
 
-        return redirect('/campaign/campaignhome/')
+        return redirect('campaigndetail', slug=slug)
 
 
 def deletecampaign(request, slug):

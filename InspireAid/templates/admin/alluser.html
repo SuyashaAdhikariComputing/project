@@ -87,7 +87,11 @@
                         {% if not user.is_staff and user != request.user %}
                         
                              <a href="{% url 'user_profile' user.id %}" class="btn btn-primary btn-sm mr-2 mb-2">View Details</a>
-                            <a href="#" class="btn btn-danger btn-sm ">Delete user</a>
+                             <form method="post" action="{% url 'delete_user' user.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete user</button>
+                            </form>
                         {% endif %}
                     </td>
                 </tr>

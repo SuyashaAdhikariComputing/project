@@ -6,13 +6,15 @@
     {% load static %}
     <!-- Additional styles for the home template -->
     <link rel="stylesheet" type="text/css" href="{% static 'blogform.css' %}">
+    {% comment %} <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script> {% endcomment %}
+    {% comment %} <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script> {% endcomment %}
 {% endblock extrastyles %}
 
 {% block body %}
 <section class="wrapper mt-2">
     <div class="container" style="margin-top: 8%; margin-bottom:8%;">
         <div class="col-sm-12 col-lg-6 offset-lg-3 text-center">
-            <form method="post" action="{% if post %}{% url 'editblog' slug=post.slug %}{% else %}{% url 'postcontent' %}{% endif %}" class="rounded-2 shadow p-5 mt-5" style="background-color: #FCF6F5; height: 600px;">
+            <form method="post" enctype="multipart/form-data" action="{% if post %}{% url 'editblog' slug=post.slug %}{% else %}{% url 'postcontent' %}{% endif %}" class="rounded-2 shadow p-5 mt-5"  style="background-color: #FCF6F5; height: 600px;">
 
 
                 {% csrf_token %}
@@ -29,8 +31,18 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <textarea class="form-control" name='content' id="postContent" rows="15" placeholder="Write your blog post content here" style="height: 200px;">{% if post %}{{ post.content }}{% endif %}</textarea>
+                    <textarea class=" form-control" name='content' id="postContent" rows="15" placeholder="Write your blog post content here" style="height: 200px;">{% if post %}{{ post.content }}{% endif %}</textarea>
                     <label for="postContent">Blog Post Content</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    {% if post.image %}
+                    <div class="mb-3">
+                        <label for="postImageURL" class="form-label">Image URL:</label>
+                        <p id="postImageURL">donot choose file if you want default image</p>
+                    </div>
+                    {% endif %}
+                    <input type="file" class="form-control" name="image" id="postImage" {% if post.image %}value="{{ post.image.url }}"{% endif %} >
                 </div>
 
                 <button type="submit" class="btn btn-success w-100 my-4">

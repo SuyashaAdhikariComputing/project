@@ -53,7 +53,12 @@
             <div class="cols__container">
                 <div class="left__col">
                     <div class="image__container">
-                        <img src="{% static 'logo.png' %}" alt="profileimage">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="profilepicture">
+                        {% else %}
+                            <img src="{% static 'logo.png' %}" alt="Default Profile Picture">
+                        {% endif %}
+                        
                         <span></span>
                     </div>
                    

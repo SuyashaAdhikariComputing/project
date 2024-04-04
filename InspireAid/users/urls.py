@@ -14,4 +14,5 @@ urlpatterns = [
     path('user-list/', views.all_user_view, name='employee_user_list'),
     path('verify-email/<str:email>/', views.verify_user_mail, name='verify_user_mail'),
     path('user-profile/<int:user_id>/', views.user_profile, name='user_profile'),
+    path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
 ]

@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render, HttpResponse
 from blog.models import Post,BlogComment
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+
 # Create your views here.
 
 
@@ -15,8 +16,14 @@ def postcontent(request):
         
         title=request.POST['title']
         content=request.POST['content'] 
+        image = request.FILES.get('image')
+
+        if image:
+            print("Received image:", image)
+        else:
+            print("No image received")
         
-        blog_post=Post(title=title, content=content, author=request.user)
+        blog_post=Post(title=title, image=image, content=content, author=request.user)
         blog_post.save()
         messages.success(request, "sucessfully Posted")
         return redirect('bloghome')
@@ -34,7 +41,11 @@ def edit_post(request, slug):
     if request.method == "POST":
         
         title = request.POST['title']
-        content = request.POST['content'] 
+        content = request.POST['content']
+        image = request.FILES.get('image')
+
+        if image:
+            post.image = image 
 
         post.author = request.user
         post.title = title

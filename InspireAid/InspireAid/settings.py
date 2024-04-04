@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'home',
     'campaign',
     'users',
-    
+    'ckeditor',
+    'django_social_share',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +157,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MESSAGE_TAGS = {
     messages.ERROR:'danger'
 }
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat']
+        ],
+        'height': 300,  # Adjust the height as needed
+        'width': '100%',  # Adjust the width as needed
+        "removePlugins" : "exportpdf",
+    }
+}
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT=BASE_DIR/'media'
