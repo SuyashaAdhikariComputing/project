@@ -61,7 +61,7 @@
                         
                         <span></span>
                     </div>
-                   
+                    {% if request.user == user %}
                     <div class="btn-container row">
                         <div class="col-md-12 mb-2">
                             <a href="{% url 'edit_profile' %}" class="btn btn-success btn-block">Edit Profile</a>
@@ -69,10 +69,19 @@
                         <div class="col-md-12 mb-2">
                             <a href="{% url 'change_password' %}" class="btn btn-success btn-block">Change Password</a>
                         </div>
-                        <div class="col-md-12 ">
-                            <a href="{% url 'change_password' %}" class="btn btn-success btn-block">Add Photo</a>
+                        <div class="col-md-12 mb-2">
+                            <a href="{% url 'donation_history' %}" class="btn btn-success btn-block">See Donation History</a>
                         </div>
+                        <div class="col-md-12 mb-2 ">
+                            <a href="{% url 'user_campaigns' user.id %}" class="btn btn-success btn-block">Created Campaign</a>
+                        </div>
+
+                        <div class="col-md-12 mb-2">
+                            <a href="{% url 'user_blogs' user.id %}" class="btn btn-success btn-block">Created Blog</a>
+                        </div>
+                     
                     </div>
+                    {% endif %}
                 
                 </div>
                <div class="table-responsive">
@@ -95,6 +104,7 @@
                         </tbody>
                     </table>
 
+                   
             </div>
             </div>
 

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load social_share %}
+{% block title %}Campaign Donation Details{% endblock title %}
+
+{% block extrastyles %}
+    <!-- Additional styles for the donation details template -->
+{% endblock extrastyles %}
+
+{% block body %}
+<div class="container" style="margin-top:8%;">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">Donation Details for Campaign: {{ campaign.title }}</h1>
+            <div class="amount-info">
+                <p>Target Amount: {{ campaign.target_amount }}</p>
+                <p>Current Amount: {{ campaign.current_amount }}</p>
+                <p>Remaining Amount: {{ remaining_amount }}</p>
+            </div>
+            {% if campaign.donations.count > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Donor</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for donation in campaign.donations.all %}
+                                <tr>
+                                    <td>{{ donation.user.username }}</td>
+                                    <td>{{ donation.amount }}</td>
+                                    <td>{{ donation.date }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center" style="color: red;">No donations have been made for this campaign yet.</p>
+            {% endif %}
+            <div class="text-center">
+                <a href="{% url 'campaigndetail' slug=campaign.slug %}" class="btn btn-success mt-5 mb-5">Back to Campaign</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

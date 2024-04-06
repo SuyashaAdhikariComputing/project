@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from users.models import CustomUser as User
 from blog.models import Post
-from campaign.models import Campaign
+from campaign.models import Campaign,Donation
 from django.core.mail import send_mail
 from users.models import OTPModel
 from .forms import SignUpForm,LoginForm,PasswordChangeForm,EditProfileForm,VerificationForm  # Import your Form
@@ -182,10 +182,10 @@ def all_user_view(request):
         return redirect('login')
     
 def user_profile(request, user_id):#to get the user profile of the user by the employee
-    # Fetch the user object based on the provided user_id
+    
     user = get_object_or_404(User, id=user_id)
     
-    # Render the user profile template with the user object
+    
     return render(request, 'user/profile.html', {'user': user, 'current_user': request.user})
 
 @login_required
@@ -202,3 +202,30 @@ def delete_user(request, user_id):
     
     # Redirect back to the user list page
     return redirect('employee_user_list')
+
+def history(request):
+    # Get donations related to the logged-in user
+    user_donations = Donation.objects.filter(user=request.user).order_by('-date')
+
+    context = {
+        'user_donations': user_donations
+    }
+    return render(request, 'user/history.html', context)
+
+def user_blogs(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    blogs = Post.objects.filter(author=user)
+    return render(request, 'user/created_blog.html', {'user': user, 'blogs': blogs})
+
+def user_campaigns(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    campaigns = Campaign.objects.filter(author=user)
+    return render(request, 'user/created_campaign.html', {'user': user, 'campaigns': campaigns})
+
+def campaign_list(request):
+    campaigns = Campaign.objects.all()  # Retrieve all campaigns
+    return render(request, 'admin/campaign_list.html', {'campaigns': campaigns})
+
+def blog_list(request):
+    blogs = Post.objects.all()  # Retrieve all blog posts
+    return render(request, 'admin/blog_list.html', {'blogs': blogs})

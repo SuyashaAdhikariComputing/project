@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'alluser.css' %}">
+
+    <style>
+        .user-box:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+    
+{% endblock extrastyles %}
+
+{% block body %}
+
+<div class="container" style="margin-top:10%;">
+    <h1 class="mb-5 text-center">Campaign List</h1>
+    <div class="table-responsive">
+        {% if campaigns %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Author</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for campaign in campaigns %}
+                <tr>
+                    <td>{{ campaign.title }}</td>
+                    <td>{{ campaign.description|truncatechars:50 }}</td>
+                    <td>{{ campaign.author }}</td>
+                    <td>{{ campaign.created_at }}</td>
+                    <td>
+                        <a href="{% url 'campaigndetail' slug=campaign.slug %}" class="btn btn-primary">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center">No campaigns  available.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock body %}

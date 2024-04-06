@@ -11,6 +11,7 @@ urlpatterns = [
     path('<slug:slug>/', CampaignDetailView.as_view(), name='campaigndetail'),
     path('editcampaign/<slug:slug>/', CampaignEditView.as_view(), name='campaignedit'),
     path('deletecampaign/<slug:slug>/', views.deletecampaign, name='campaigndelete'),
-    path('<slug:slug>/donate/', DonateFormView.as_view(), name='donate'), 
+    path('<slug:slug>/donate/', DonateFormView.as_view(), name='donate'),
+    path('donation-details/<int:campaign_id>/', views.donation_details, name='donation_details'), 
     #path('<slug:slug>/donate/process/', DonateProcessView.as_view(), name='donate_process'),
 ]

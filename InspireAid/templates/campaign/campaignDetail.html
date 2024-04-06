@@ -139,16 +139,26 @@
                             {% endif %}
 
                             {% if user.role == 'donor' %}
-                            <a href="{% url 'donate' slug=campaign.slug %}" class="btn btn-success me-2 rounded">donate</a>
+                                {% if campaign.current_amount < campaign.target_amount %}
+                                    <a href="{% url 'donate' slug=campaign.slug %}" class="btn btn-success me-2 rounded">Donate</a>
+                                {% else %}
+                                    <button class="btn btn-success me-2 rounded" onclick="alert('Campaign has already ended.')" style="cursor: pointer;">Donate</button>
+                                {% endif %}
                             {% endif %}
 
-                            
+                        
 
                         </div>
+                        
                         <div class="my-2">
                             <p>{% post_to_twitter "New success story" object_or_url "Post to Twitter"%}</p>
                             <p>{% post_to_facebook "New success story" object_or_url "Post to Facebook"%}</p>
                         </div>
+                        {% if user.is_staff or user == campaign.author or user.role == 'employee' %}
+                        <div class="text-center mt-4 mb-4">
+                            <a href="{% url 'donation_details' campaign_id=campaign.id %}" class="btn btn-success rounded mt-5" style="width: 600px;">Donation Details</a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

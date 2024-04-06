@@ -1,4 +1,5 @@
 
+from decimal import Decimal
 import json
 from .models import Donation
 from django.contrib import messages
@@ -8,6 +9,7 @@ from django.views.generic import ListView, DetailView, View, DeleteView
 import requests
 import urllib3
 from .models import Campaign,CampaignComment
+
 # Create your views here.
 
 class CampaignView(ListView):
@@ -120,7 +122,8 @@ def initiatekhalti(request):
     url = "https://a.khalti.com/api/v2/epayment/initiate/"
 
     purchase_order_id=request.POST.get('campaign_id')
-    amount=request.POST.get('amount')
+    got_amount=request.POST.get('amount')
+    amount=got_amount*100
     return_url=request.POST.get('return_url')
 
     #print("campaign_id",purchase_order_id)
@@ -191,6 +194,14 @@ def verifykhalti(request):
               )
 
               donation.save()
+
+              campaign = get_object_or_404(Campaign, id=campaign_id)
+              campaign.current_amount += Decimal(amount/100)
+              campaign.save()
          
           return redirect(reverse('campaignhome'))
         
+def donation_details(request, campaign_id):
+    campaign = get_object_or_404(Campaign, id=campaign_id)
+    remaining_amount = campaign.target_amount - campaign.current_amount
+    return render(request, 'campaign/campaign_donation.html', {'campaign': campaign, 'remaining_amount': remaining_amount})
