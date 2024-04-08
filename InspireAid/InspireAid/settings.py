@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'blog',
     'home',
     'campaign',
+    'volunteers',
     'users',
     'ckeditor',
     'django_social_share',

@@ -6,6 +6,7 @@ urlpatterns = [
     path('campaignhome/',CampaignView.as_view(),name="campaignhome"),
     path('createcampaign/',CampaignPostView.as_view(), name='postcampaign'),
     path('postcampaigncomment/',views.postcampaigncomment, name='postcampaigncomment'),
+    path('campaign/check_amount_limit/', views.check_amount_limit, name='check_amount_limit'),
     path('initiatekhalti/', views.initiatekhalti, name='initiatekhalti'),
     path('verifykhalti/', views.verifykhalti, name='verifykhalti'),
     path('<slug:slug>/', CampaignDetailView.as_view(), name='campaigndetail'),

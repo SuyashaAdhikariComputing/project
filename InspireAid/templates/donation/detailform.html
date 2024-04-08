@@ -12,7 +12,7 @@
 
 <div class="container mb-5" style="margin-top: 10%;" >
     
-<form action="{% url 'initiatekhalti' %}" method="POST">
+<form action="{% url 'check_amount_limit' %}" method="POST">
     {%csrf_token%}
     <input type="hidden" name="campaign_id" value="{{ campaign.id }}">
     <input type="text" class="form-control" name="amount" placeholder="Enter amount">

@@ -1,6 +1,8 @@
 
 from decimal import Decimal
 import json
+
+from django.http import HttpResponseRedirect
 from .models import Donation
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
@@ -115,6 +117,24 @@ def postcampaigncomment(request):
         messages.success(request, "Your Comment has been posted sucessfully")
     
         return redirect('campaigndetail', slug=post.slug)
+    
+def check_amount_limit(request):
+
+    purchase_order_id = request.POST.get('campaign_id')
+    given_amount=Decimal(request.POST.get('amount'))
+    amount=(given_amount/100)
+
+    campaign = Campaign.objects.get(id=purchase_order_id)
+    total_capacity = campaign.target_amount
+    current_amount = campaign.current_amount
+    current_capacity=total_capacity-current_amount
+
+    if current_capacity >= amount:
+        return initiatekhalti(request)
+        
+    else:
+        messages.error(request, f'Donation amount exceeds total campaign capacity So, you cant donate more than {current_capacity} ')
+        return redirect('campaigndetail', slug=campaign.slug)
 
 
 def initiatekhalti(request):
@@ -122,10 +142,13 @@ def initiatekhalti(request):
     url = "https://a.khalti.com/api/v2/epayment/initiate/"
 
     purchase_order_id=request.POST.get('campaign_id')
-    got_amount=request.POST.get('amount')
-    amount=got_amount*100
+    amount=request.POST.get('amount')
+    
     return_url=request.POST.get('return_url')
 
+    
+
+    
     #print("campaign_id",purchase_order_id)
     #print("amount",amount)
     #print("return_url",return_url)
@@ -145,7 +168,7 @@ def initiatekhalti(request):
         }
     })
     headers = {
-        'Authorization': 'key bc5f23918f7c47d49e5316a4550258ea',
+        'Authorization': 'key e53ede9bcdc74b6aa0b307c2f8785aa5',
         'Content-Type': 'application/json',
     }
 
@@ -153,8 +176,8 @@ def initiatekhalti(request):
 
     print(response.text)
     new_res=json.loads(response.text)
-    print(new_res)
 
+    print(new_res)
     return redirect(new_res['payment_url'])
 
 def verifykhalti(request):
@@ -165,13 +188,14 @@ def verifykhalti(request):
     if request.method == 'GET':
 
           headers = {
-         'Authorization': 'key bc5f23918f7c47d49e5316a4550258ea',
+         'Authorization': 'key e53ede9bcdc74b6aa0b307c2f8785aa5',
          'Content-Type': 'application/json',
          }
 
           pidx= request.GET.get('pidx')
           campaign_id= request.GET.get('purchase_order_id')
-          amount= request.GET.get('amount')
+          amount=request.POST.get('amount')
+          
 
           data=json.dumps({
              'pidx':pidx
