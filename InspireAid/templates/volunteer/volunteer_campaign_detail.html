@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}campaign details{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'campaignPost.css' %}">
+    <style>
+        
+        .recommended-campaigns {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .recommended-campaign {
+            width: calc(33.33% - 10px); 
+            margin-bottom: 20px;
+        }
+
+        
+        .campaign-detail {
+            margin-top: 8%;
+        }
+
+        .campaign-detail .p-md-5 {
+            background-color: #343a40;
+            color: #ffffff;
+            border-radius: 10px;
+        }
+
+        .campaign-detail h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: #2BAE66;
+        }
+
+        .campaign-detail p {
+            font-size: 1.25rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--gray-1);
+        }
+
+        .campaign-detail .recommended-campaign img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .campaign-detail .blog-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .campaign-detail .blog-box .card-body {
+            padding: 20px;
+        }
+
+        .campaign-detail .blog-box h4 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2BAE66;
+        }
+
+        .campaign-detail .blog-box h5 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2BAE66;
+        }
+
+        .campaign-detail .blog-box .blog-desc {
+            margin-top: 20px;
+            font-size: 1.25rem;
+            color: var(--gray-1);
+        }
+
+        .campaign-detail .blog-box .btn-group {
+            margin-top: 20px;
+        }
+
+        
+        .btn-group .btn {
+            width: 100%; 
+            margin-bottom: 10px; 
+        }
+    </style>
+{% endblock extrastyles %}
+
+{% block body %}
+<div style="margin-top: 8%;">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-0 alert-dismissible fade show" role="alert">
+            <strong>Message:</strong> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor%}
+    </div>
+{% endif %}
+<div class="p-4 p-md-5 mb-4 text-white bg-dark rounded " >
+
+    <div class="col-md-6 px-0">
+        <h1 class="display-4 fst-italic"> Cool feature volunteer campaign post</h1>
+        <p class="lead my-3">lorem djcbdj jjbchdb chbdhcv jcbdh jcdhbc jcbdjcb</p>
+        <p class="lead mb-0">
+            <a href="#" class="text-white fw-bold"></a>
+        </p>
+    </div>
+</div>
+</div>
+
+
+<!-- Campaign Details Section -->
+
+
+
+<section class="blog-section blog-detail">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-11 mx-auto">
+                <div class="card blog-box">
+                    {% if volunteer_campaign.image %}
+                        <img src="{{ MEDIA_URL }}{{ object.image.url }}" class="card-img-top" alt="{{ object.title }}">
+                    {% else %}
+                        <p>No image available</p>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <h4 class="card-title">{{ object.title }}</h4>
+                        <h6 class="card-text">Article By: {{ object.author }}</h6>
+                        <div class="blog-desc">
+                            <p class="card-text">{{ object.description }}</p>
+                        </div>
+                        <div class="btn-group mt-5">
+                            {% if user.is_staff or user == object.author or user.role == 'employee' %}
+                                <a href="#" class="btn btn-danger me-2 rounded" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a>
+                            {% endif %}
+
+                            {% if user == object.author %}
+                                <a href="{% url 'edit_volunteer_campaign' slug=volunteer_campaign.slug %}" class="btn btn-danger me-2 rounded">Edit</a>
+                            {% endif %}
+
+                            
+                                {% if user.role == 'donor' %}
+                                    {% if has_applied %}
+                                        <form action="{% url 'remove_volunteer_application' campaign_id=object.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger me-2 rounded">Remove</button>
+                                        </form>
+                                    {% else %}
+                                        {% if object.current_volunteers < object.target_volunteers %}
+                                            <a href="{% url 'apply_for_volunteer' campaign_id=object.id %}" class="btn btn-success me-2 rounded">Apply</a>
+                                        {% else %}
+                                            <button class="btn btn-success me-2 rounded" onclick="alert('Campaign has already ended.')" style="cursor: pointer;">Apply</button>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                        
+                        {% if user.is_staff or user == object.author or user.role == 'employee' %}
+                        <div class="text-center mt-4 mb-4">
+                            <a href="{% url 'volunteer_campaign_details' slug=volunteer_campaign.slug %}" class="btn btn-success rounded mt-5" style="width: 600px;">Volunteer Details</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Increase the space between the footer and the box -->
+<div style="margin-bottom: 50px;"></div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this campaign?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a href="{% url 'delete_volunteer_campaign' slug=slug %}" class="btn btn-danger">Delete</a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="container my-4 " style="margin-left: 5%; overflow-x: hidden;">
+    <h2 class="mt-5 mb-4">Comments ({{campaign_comments.count}})</h2>
+    <div class="my-2">
+        {% if user.is_authenticated%}
+
+         <form action= "{% url 'postvolunteercampaigncomment' %}" method="POST">
+            {%csrf_token%}
+            
+        
+            <div class="mb-3">
+              
+              <input type="text" class="form-control" name="comment" placeholder="Enter comment here" style="width:90%;">
+              
+            </div>
+    
+    
+            <input type="hidden" name="campaignid" value={{object.id}} >
+            <button type="submit" class="btn btn-primary mb-4 mt-2">Submit</button>
+    
+          </form>
+
+        {%else%}
+        <p>Login to post comment</p>
+        {%endif%}
+    </div>
+    
+
+      {% for comment in campaign_comments %}
+
+        <div class="row my-3">
+
+            <div class="col-md-1">
+                <img class="rounded mx-auto d-block w-100 p-2" src="/static/image/user.png" alt="user">
+            </div>
+            <div class="col-md-11">
+                <b>{{comment.comment_author.username}}</b> at {{comment.date}}
+                <div>{{comment.comment}}</div>
+            </div>
+
+        </div>
+
+
+      {% endfor %}
+
+
+
+</div>
+{% endblock body %}
+
+

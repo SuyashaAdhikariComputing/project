@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Campaign Volunteer Application Details{% endblock title %}
+
+{% block extrastyles %}
+    <!-- Additional styles for the donation details template -->
+{% endblock extrastyles %}
+
+{% block body %}
+<div class="container" style="margin-top:8%;">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="text-center mb-4">Application Details for Campaign: {{ campaign.title }}</h1>
+            <div class="amount-info">
+                <p>Target volunteers: {{ campaign.target_volunteers }}</p>
+                <p>Current volunteers: {{ campaign.current_volunteers }}</p>
+                <p>Remaining volunteers: {{ remaining_volunteers }}</p>
+            </div>
+            {% if applications %}
+                <div class="table-responsive mt-5">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone Number</th>
+                                <th scope="col">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for details in applications %}
+                                <tr>
+                                    <td>{{ details.user.username }}</td>
+                                    <td>{{ details.user.email }}</td>
+                                    <td>{{ details.user.phone_number }}</td>
+                                    <td>{{ details.applied_at }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center" style="color: red;">No applications have been made for this campaign yet.</p>
+            {% endif %}
+            <div class="text-center">
+                <a href="{% url 'volunteer-campaign-detail' pk=campaign.pk %}" class="btn btn-success mt-5 mb-5">Back to Campaign</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

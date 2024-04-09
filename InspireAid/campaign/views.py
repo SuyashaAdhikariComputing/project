@@ -28,7 +28,6 @@ class CampaignDetailView(DetailView):
         # Get the current campaign object
         current_campaign = self.get_object()
 
-        # Get three recommended campaigns (you may customize this logic based on your requirements)
         
 
         campaign_comments = CampaignComment.objects.filter(campaign_post=current_campaign.pk)

@@ -24,7 +24,7 @@
         <div class="col-12">
             
             {% if user.is_authenticated %}
-                <a href="{% url 'postcampaign' %}" class="btn btn-success">Create Volunteer Campaign</a>
+                <a href="{% url 'post_volunteer_campaign' %}" class="btn btn-success">Create Volunteer Campaign</a>
             {% else %}
                 <a href="{% url 'login' %}" class="btn btn-success ">Create Volunteer Campaign</a>
             {% endif %}
@@ -44,7 +44,7 @@
                         <div class="mb-1 text-body-secondary">Target Volunteers: {{ campaign.target_volunteers }}</div>
                         <p class="card-text mb-auto">{{ campaign.description | truncatechars:300 }}</p>
                         <div class="mt-3">
-                            <a href="#" role="button" class="btn btn-success">Learn More</a>
+                            <a href="{% url 'volunteer-campaign-detail' pk=campaign.pk %}" role="button" class="btn btn-success">Learn More</a>
                         </div>
                         
                     </div>

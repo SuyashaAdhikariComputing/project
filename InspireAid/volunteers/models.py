@@ -27,19 +27,39 @@ class VolunteerCampaign(models.Model):
     image = models.ImageField(upload_to='volunteer_campaign_images/', null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        def save(self, *args, **kwargs):
-
-            if not self.author_id:
-                # If author is not specified, assign a default user
-                self.author = User.objects.first()  # You may adjust this logic based on your requirements
-            
-            if not self.slug:
-                # Combine title, author username, and publish date to generate slug
-                publish_date = timezone.now()  # Get the current date and time
-                slug_text = f"{self.title} {self.author.username if self.author else 'unknown'} {publish_date.strftime('%Y-%m-%d %H:%M:%S')}"
-                self.slug = slugify(slug_text)[:130]  # Limit slug length to 130 characters
+        if not self.slug:
+            # Generate a unique slug based on the campaign title
+            base_slug = slugify(self.title)
+            unique_slug = base_slug
+            counter = 1
+            while VolunteerCampaign.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = unique_slug
 
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
+    
+class VolunteerCampaignComment(models.Model):
+    sno=models.AutoField(primary_key= True)
+    comment = models.TextField()
+    comment_author = models.ForeignKey(User, on_delete=models.CASCADE)
+    campaign_post = models.ForeignKey(VolunteerCampaign, on_delete=models.CASCADE, related_name='comments')
+    date = models.DateTimeField(auto_now_add=True, blank=True)
+    parent=models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.comment[0:13]+"...."+"by "+ self.comment_author.first_name
+    
+class VolunteerApplication(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(VolunteerCampaign, on_delete=models.CASCADE)
+    applied_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'campaign')
+
+    def __str__(self):
+        return f"{self.user.username} applied for {self.campaign.title}"
