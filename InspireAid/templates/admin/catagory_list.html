@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Category List{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'alluser.css' %}">
+{% endblock extrastyles %}
+
+{% block body %}
+
+<div class="container" style="margin-top:10%;">
+    <h1 class="mb-5 text-center">Category List</h1>
+    <div class="table-responsive">
+        {% if categories %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Actions</th> <!-- Add Actions column -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.description|truncatechars:50 }}</td>
+                    <td>
+                        <!-- Delete Category Button -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">
+                            Delete
+                        </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ category.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel{{ category.id }}">Confirm Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete "{{ category.name }}" category?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <form action="{% url 'delete_category' category.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center">No categories available.</p>
+        {% endif %}
+    </div>
+    
+    <!-- Add Category Button -->
+    <div class="text-center mt-4 mb-5">
+        <a href="{% url 'add_category' %}" class="btn btn-success">Add Category</a>
+    </div>
+</div>
+
+{% endblock body %}

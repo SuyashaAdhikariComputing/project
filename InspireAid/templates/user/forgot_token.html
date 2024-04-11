@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}sign up{% endblock title %}
+{% block title %}Verify{% endblock title %}
 
 {% block extrastyles %}
     {% load static %}
@@ -11,25 +11,18 @@
 
 {% block body %}
 
-
 <section class="wrapper mb-5 "style="margin-top:15%; ">
-
-    
     <div class="container">
         <div class="col-sm-12 col-lg-4 offset-lg-3 col-xl-4 offset-xl-4 text-center">
-
-            <form action="{% url 'signup' %}" method="post" class="rounded-2 shadow p-5 mt-1" style="background-color: #FCF6F5;">
+            
+            <form action="{% url 'verify_password_reset' email=email%}" method="post" class="rounded-2 shadow p-5 mt-1" style="background-color: #FCF6F5;">
                 
                 {%csrf_token %}
 
-                <h3 class="text-dark fw-bolder fs-4 mb-2"> Create an account</h3>
+                <h3 class="text-dark fw-bolder fs-4 mb-2"> Verify account</h3>
 
-                <div class="fw-normal mb-2">
-                    Already have a account?  <a href="{% url 'login' %}" class="custom-text fw-bold text-decoration-none">SignIn</a>
-                </div>
 
-               
-                {% for field in signup_form %}
+                {% for field in otp_form %}
                     <div class="form-floating mb-3">
                         {{ field }}
                         <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
@@ -37,7 +30,7 @@
                {% endfor %} 
 
                
-                <button type="submit" class="btn custom-button submit_btn w-100 my-4" value="Submit">Sign up</button>
+                <button type="submit" class="btn custom-button submit_btn w-100 my-4" value="Submit">Verify</button>
 
             </form>
         </div>

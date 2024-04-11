@@ -1,9 +1,11 @@
+from django.http import HttpResponseServerError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login as auth_login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout
 from users.models import CustomUser as User
 from blog.models import Post
+from volunteers.models import VolunteerCampaign,Category
 from campaign.models import Campaign,Donation
 from django.core.mail import send_mail
 from users.models import OTPModel
@@ -12,6 +14,7 @@ from .forms import SignUpForm,LoginForm,PasswordChangeForm,EditProfileForm,Verif
 from django.contrib import messages
 import random
 from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def otp_generation():
     return str(random.randint(100000, 999999))
@@ -33,33 +36,35 @@ def signup(request):
             email = signup_form.cleaned_data['email']
             phone = signup_form.cleaned_data['phone']
 
-            if User.objects.filter(username=username).exists():
-                messages.error(request, 'Username already taken.')
+            
+            otp = otp_generation()
+            user = signup_form.save(commit=False)
+            user.is_active = False
+            user.save()
 
-            elif User.objects.filter(email=email).exists():
-                messages.error(request, 'This email already have account')
+            otp_model = OTPModel(user=user, otp=otp)
+            otp_model.save()
 
-            elif User.objects.filter(phone=phone).exists():
-                messages.error(request, 'This phone number is already registered')
-
-            else:
-                otp = otp_generation()
-                user = signup_form.save(commit=False)
-                user.is_active = False
-                user.save()
-
-                otp_model = OTPModel(user=user, otp=otp)
-                otp_model.save()
-
-                send_email(email, otp)
+            send_email(email, otp)
                 
-                return redirect('verify_user_mail', email=email)
+            return redirect('verify_user_mail', email=email)
         else:
-            messages.error(request, 'fill all fields ')
+             for field, errors in signup_form.errors.items():
+                for error in errors:
+                    messages.error(request, f" {error}")
     else:
         signup_form = SignUpForm()
+       
     
-    return render(request, "user/signup.html", {'signup_form': signup_form})
+    
+    
+
+    error_messages = [message.message for message in messages.get_messages(request)]
+    
+    print(error_messages)
+    return render(request, "user/signup.html", {'signup_form': signup_form, 'error_messages': error_messages})
+    
+    
 
     # signup_form = SignUpForm(request.POST or None) 
     # if request.method == 'POST':
@@ -83,6 +88,7 @@ def verify_user_mail(request, email):
                     otp_model.delete()
                     user.is_active = True
                     user.save()
+                    
                     return redirect('login')
                 else:
                     messages.ERROR(request, 'The otp is not correct')
@@ -96,9 +102,87 @@ def verify_user_mail(request, email):
 
     else:
         otp_form = VerificationForm()
+    
+    error_messages = [message.message for message in messages.get_messages(request)]
 
-    return render(request, "user/token.html",  {'otp_form': otp_form, 'email': email})
+    return render(request, "user/token.html",  {'otp_form': otp_form, 'email': email, 'error_messages': error_messages})
 
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')  # Get the email directly from request.POST
+        if not email:
+            messages.error(request, 'give email to change pasword')
+
+        else:
+
+        # Check if the email exists in the database
+          user = User.objects.filter(email=email).first()
+        
+        if user:
+            otp = otp_generation()
+            otp_model = OTPModel(user=user, otp=otp)
+            otp_model.save()
+            send_email(email, otp)
+            
+            return redirect('verify_password_reset', email=email)
+        else:
+            messages.error(request, 'No user found with this email address.')
+        
+    error_messages = [message.message for message in messages.get_messages(request)]
+    
+   
+    
+    # If the request method is not POST or there was an error, render the form
+    return render(request, 'user/forgotpassword.html',{'error_messages': error_messages})
+
+
+def verify_password_reset(request, email):
+    if request.method == 'POST':
+        form = VerificationForm(request.POST)
+        if form.is_valid():
+            otp = form.cleaned_data['otp']
+            otp_model = OTPModel.objects.filter(user__email=email).first()
+            if otp_model and otp == otp_model.otp:
+                otp_model.delete()
+                
+                user = User.objects.filter(email=email).first()
+                if user:
+                    return redirect('password_reset', email=email)
+                else:
+                    return HttpResponseServerError('User not found.')
+                
+            else:
+                messages.error(request, 'Invalid OTP. Please try again.')
+    else:
+        form = VerificationForm()
+
+    error_messages = [message.message for message in messages.get_messages(request)]
+
+    return render(request, 'user/forgot_token.html', {'otp_form': form, 'email': email, 'error_messages': error_messages})
+
+def password_reset(request, email):
+    if request.method == 'POST':
+        new_password1 = request.POST.get('new_password1')
+        new_password2 = request.POST.get('new_password2')
+        
+        if new_password1 != new_password2:
+            messages.error(request, "Passwords don't match.")
+            return redirect('reset_password', email=email)
+
+        user = User.objects.filter(email=email).first()
+        if user:
+            user.set_password(new_password1)
+            user.save()
+            messages.success(request, 'Your password has been successfully changed. Please login with your new password.')
+            return redirect('login')
+        else:
+            return HttpResponseServerError('User not found.')
+        
+    error_messages = [message.message for message in messages.get_messages(request)]
+
+
+    return render(request, 'user/password_reset.html', {'email': email, 'error_messages': error_messages})
 
 
 def user_login(request):
@@ -165,21 +249,30 @@ def edit_profile(request):
 def all_user_view(request):
     if request.user.is_authenticated and request.user.role == 'employee':
         users = User.objects.all()
-        donor_count = User.objects.filter(role='donor').count()
-        organization_count = User.objects.filter(role='organization').count()
+
+        role_filter = request.GET.get('role')
+        if role_filter:
+            users = users.filter(role=role_filter)
+
+        search_query = request.GET.get('search')
+        if search_query:
+            users = users.filter(username__icontains=search_query)
+
+        user_count = (User.objects.filter(role='organization').count() + User.objects.filter(role='donor').count())
         total_blog_posts = Post.objects.all().count()
         total_campaign_posts = Campaign.objects.all().count()
+        total_volunteer_posts = VolunteerCampaign.objects.all().count()
+
         return render(request, 'admin/alluser.html', {
             'users': users, 
-            'donor_count': donor_count, 
-            'organization_count': organization_count,
+            'user_count': user_count,
             'total_blog_posts': total_blog_posts,
             'total_campaign_posts': total_campaign_posts,
-            })
-        
+            'total_volunteer_posts': total_volunteer_posts
+        })
     else:
-        
         return redirect('login')
+
     
 def user_profile(request, user_id):#to get the user profile of the user by the employee
     
@@ -229,3 +322,55 @@ def campaign_list(request):
 def blog_list(request):
     blogs = Post.objects.all()  # Retrieve all blog posts
     return render(request, 'admin/blog_list.html', {'blogs': blogs})
+
+def category_list(request):
+    categories = Category.objects.all()  
+    return render(request, 'admin/catagory_list.html', {'categories': categories})
+
+def volunteer_list(request):
+    title_filter = request.GET.get('title')
+    date_filter = request.GET.get('date')
+    category_filter = request.GET.get('category')
+
+    volunteers = VolunteerCampaign.objects.all()
+
+    if title_filter:
+        volunteers = volunteers.filter(title__icontains=title_filter)
+
+    if date_filter:
+        volunteers = volunteers.filter(created_at__date=date_filter)
+
+    if category_filter:
+        volunteers = volunteers.filter(categories__name=category_filter)
+
+    categories = Category.objects.all()  # Get all categories for the dropdown menu
+
+    context = {
+        'volunteers': volunteers,
+        'categories': categories,
+    }
+
+    return render(request, 'admin/volunteercampaign_list.html', context)
+
+@login_required
+def add_category(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        
+        if name and description:
+            category = Category(name=name, description=description)
+            category.save()
+            messages.success(request, 'Category added successfully.')
+            return redirect('category_list')
+        else:
+            messages.error(request, 'Error adding category. Please provide both name and description.')
+    
+    return render(request, 'admin/add_catagory.html')
+
+def delete_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    if request.method == 'POST':
+        category.delete()
+        messages.success(request, 'Category deleted successfully.')
+    return redirect('category_list')

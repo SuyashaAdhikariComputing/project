@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Volunteer Campaign List{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'alluser.css' %}">
+{% endblock extrastyles %}
+
+{% block body %}
+<div class="container" style="margin-top:10%;">
+    <h1 class="mb-5 text-center">Volunteer Campaign List</h1>
+    <form method="get" action="{% url 'volunteer_list' %}">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="title" placeholder="Search by title">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="date">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="category">
+                    <option value="">Select category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-success">Filter</button>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive mt-5 mb-5">
+        {% if volunteers %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Author</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for campaign in volunteers %}
+                <tr>
+                    <td>{{ campaign.title }}</td>
+                    <td>{{ campaign.description|truncatechars:50 }}</td>
+                    <td>{{ campaign.author }}</td>
+                    <td>{{ campaign.created_at }}</td>
+                    <td>
+                        <a href="{% url 'volunteer-campaign-detail' pk=campaign.pk %}" class="btn btn-primary">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center">No volunteer campaigns available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock body %}

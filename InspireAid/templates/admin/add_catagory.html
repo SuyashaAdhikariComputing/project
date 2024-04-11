@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Add Category{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'signup.css' %}">
+    <style>
+        .form-floating label {
+            top: 0;
+        }
+    </style>
+{% endblock extrastyles %}
+
+{% block body %}
+
+<section class="wrapper mb-5" style="margin-top:15%;">
+    <div class="container">
+        <div class="col-sm-12 col-lg-4 offset-lg-3 col-xl-4 offset-xl-4 text-center">
+            <form action="{% url 'add_category' %}" method="post" class="rounded-2 shadow p-5 mt-1" style="background-color: #FCF6F5;">
+                {% csrf_token %}
+
+                <h3 class="text-dark fw-bolder fs-4 mb-2">Add Category</h3>
+
+                <div class="form-floating mb-3">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Category Name" required>
+                    <label for="email" style="position: absolute; top: -10px; left: -10px; color: #495057; font-size: 0.9rem; transition: all 0.2s ease-out;">Category Name</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <textarea name="description" class="form-control" id="description" placeholder="Category Description" required></textarea>
+                    <label for="email" style="position: absolute; top: -10px; left: -10px; color: #495057; font-size: 0.9rem; transition: all 0.2s ease-out;">Category Description</label>
+                </div>
+
+                <button type="submit" class="btn custom-button submit_btn w-100 my-4" value="Submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock body %}

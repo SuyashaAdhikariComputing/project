@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm,PasswordChangeForm
 from .models import CustomUser
+from volunteers.models import Category
+
 # class SignUpForm(forms.Form):
 #     username = forms.CharField(label='Username', max_length=100)
 #     first_name = forms.CharField(label='first_Name', max_length=100)
@@ -26,6 +28,8 @@ class SignUpForm(UserCreationForm):
         model = CustomUser
         fields = ['username', 'first_name', 'last_name','email', 'phone', 'role',  'password1', 'password2']
 
+
+
 class LoginForm(AuthenticationForm):
     class Meta:
         model = CustomUser
@@ -42,3 +46,6 @@ class EditProfileForm(forms.ModelForm):
 
 class VerificationForm(forms.Form):
     otp = forms.CharField(label='Write You OTP', max_length=10)
+
+
+    

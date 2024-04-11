@@ -1,103 +1,121 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock title %}
+{% block title %}User List{% endblock title %}
 
 {% block extrastyles %}
     {% load static %}
     <!-- Additional styles for the home template -->
     <link rel="stylesheet" type="text/css" href="{% static 'alluser.css' %}">
-
-    <style>
-        .user-box:hover {
-            transform: translateY(-5px);
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
-        }
-    </style>
-    
 {% endblock extrastyles %}
 
 {% block body %}
 
-<body>
-    <div class="container mt-4">
-        <h1 class="mb-4 text-white">User List</h1>
-        <div class="row">
-            <div class="col-md-3">
+<div class="container mt-4">
+    <h1 class="mb-4 text-white">User List</h1>
+    <div class="row">
+        <div class="col-md-3">
+            <a href="{% url 'blog_list' %}" class="text-decoration-none">
                 <div class="card shadow-m my-3 user-box" style="background-color: #F5F5F5;">
                     <div class="card-body text-center">
-                        <h5 class="card-title text-black">Organizations</h5>
-                        <p class="card-text text-black"><strong style="font-size: 24px;">{{ organization_count }}</strong></p>
+                        <h5 class="card-title text-black">Blog Posts</h5>
+                        <p class="card-text text-black"><strong style="font-size: 24px;">{{ total_blog_posts }}</strong></p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <a href="{% url 'blog_list' %}" class="text-decoration-none">
-                    <div class="card shadow-m my-3 user-box" style="background-color: #F5F5F5;">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-black">Blog Posts</h5>
-                            <p class="card-text text-black"><strong style="font-size: 24px;">{{ total_blog_posts }}</strong></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3">
-                <a href="{% url 'campaign_list' %}" class="text-decoration-none">
-                    <div class="card shadow-m my-3 user-box" style="background-color: #F5F5F5;">
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-black">Campaigns</h5>
-                            <p class="card-text text-black"><strong style="font-size: 24px;">{{ total_campaign_posts }}</strong></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-md-3">
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'campaign_list' %}" class="text-decoration-none">
                 <div class="card shadow-m my-3 user-box" style="background-color: #F5F5F5;">
                     <div class="card-body text-center">
-                        <h5 class="card-title text-black">Donors</h5>
-                        <p class="card-text text-black"><strong style="font-size: 24px;">{{ donor_count }}</strong></p>
+                        <h5 class="card-title text-black">Donation Campaigns</h5>
+                        <p class="card-text text-black"><strong style="font-size: 24px;">{{ total_campaign_posts }}</strong></p>
                     </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'volunteer_list' %}" class="text-decoration-none">
+                <div class="card shadow-m my-3 user-box" style="background-color: #F5F5F5;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-black">Volunteer Campaigns</h5>
+                        <p class="card-text text-black"><strong style="font-size: 24px;">{{ total_volunteer_posts }}</strong></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-m my-3 user-box" style="background-color: #F5F5F5;">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-black">Users</h5>
+                    <p class="card-text text-black"><strong style="font-size: 24px;">{{ user_count }}</strong></p>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="container mt-5">
+
     
-    <div class="container mt-4">
-        
-        <table class="table table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Username</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Bio</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.phone }}</td>
-                    <td>{{ user.get_role_display }}</td>
-                    <td>{{ user.bio }}</td>
-                    <td>
-                        {% if not user.is_staff and user != request.user %}
-                        
-                             <a href="{% url 'user_profile' user.id %}" class="btn btn-primary btn-sm mr-2 mb-2">View Details</a>
-                             <form method="post" action="{% url 'delete_user' user.id %}" class="d-inline">
-                                {% csrf_token %}
-                                <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete user</button>
-                            </form>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</body>
+    <form method="get" action="{% url 'all_user_view' %}">
+        <div class="row">
+            <div class="col-md-6">
+
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Search by name" name="search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="input-group mb-3">
+                    <select class="form-select" name="role">
+                        <option value="">All user</option>
+                        <option value="organization">Organization</option>
+                        <option value="donor">Donor</option>
+                    </select>
+                    <button class="btn btn-outline-success" type="submit">Apply</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <table class="table table-striped mt-5 mb-5">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Role</th>
+                <th scope="col">Bio</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone }}</td>
+                <td>{{ user.get_role_display }}</td>
+                <td>{{ user.bio }}</td>
+                <td>
+                    {% if not user.is_staff and user != request.user %}
+                    <a href="{% url 'user_profile' user.id %}" class="btn btn-primary btn-sm mr-2 mb-2">View Details</a>
+                    <form method="post" action="{% url 'delete_user' user.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete user</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
 {% endblock body %}
