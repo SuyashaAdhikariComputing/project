@@ -28,6 +28,12 @@ class SignUpForm(UserCreationForm):
         model = CustomUser
         fields = ['username', 'first_name', 'last_name','email', 'phone', 'role',  'password1', 'password2']
 
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
+        self.fields['username'].required = True  # Make username field required
+        self.fields['email'].required = True  # Make email field required
+
+
 
 
 class LoginForm(AuthenticationForm):

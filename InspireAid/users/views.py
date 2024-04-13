@@ -27,6 +27,40 @@ def send_email(email, otp):
     reciever=[email] 
     send_mail(title, content, email_from, reciever)
 
+# def signup(request):
+#     if request.method == 'POST':
+#         signup_form = SignUpForm(request.POST)
+
+#         if signup_form.is_valid():
+#             username = signup_form.cleaned_data['username']
+#             email = signup_form.cleaned_data['email']
+#             phone = signup_form.cleaned_data['phone']
+
+            
+#             otp = otp_generation()
+#             user = signup_form.save(commit=False)
+#             user.is_active = False
+#             user.save()
+
+#             otp_model = OTPModel(user=user, otp=otp)
+#             otp_model.save()
+
+#             send_email(email, otp)
+                
+#             return redirect('verify_user_mail', email=email)
+#         else:
+#              for field, errors in signup_form.errors.items():
+#                 for error in errors:
+#                     messages.error(request, f"Error in field '{field}': {error}")
+#     else:
+#         signup_form = SignUpForm()
+       
+    
+#     error_messages = [message.message for message in messages.get_messages(request)]
+    
+#     print(error_messages)
+#     return render(request, "user/signup.html", {'signup_form': signup_form, 'error_messages': error_messages})
+
 def signup(request):
     if request.method == 'POST':
         signup_form = SignUpForm(request.POST)
@@ -36,33 +70,41 @@ def signup(request):
             email = signup_form.cleaned_data['email']
             phone = signup_form.cleaned_data['phone']
 
-            
-            otp = otp_generation()
-            user = signup_form.save(commit=False)
-            user.is_active = False
-            user.save()
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already taken.')
 
-            otp_model = OTPModel(user=user, otp=otp)
-            otp_model.save()
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, 'This email already has an account.')
 
-            send_email(email, otp)
-                
-            return redirect('verify_user_mail', email=email)
+            elif User.objects.filter(phone=phone).exists():
+                messages.error(request, 'This phone number is already registered.')
+
+            else:
+                otp = otp_generation()
+                user = signup_form.save(commit=False)
+                user.is_active = False
+                user.save()
+
+                otp_model = OTPModel(user=user, otp=otp)
+                otp_model.save()
+
+                send_email(email, otp)
+
+                return redirect('verify_user_mail', email=email)
         else:
-             for field, errors in signup_form.errors.items():
+            for field, errors in signup_form.errors.items():
                 for error in errors:
-                    messages.error(request, f" {error}")
+                    messages.error(request, f"Error in field '{field}': {error}")
     else:
         signup_form = SignUpForm()
-       
-    
-    
-    
+        
 
     error_messages = [message.message for message in messages.get_messages(request)]
-    
+
     print(error_messages)
+
     return render(request, "user/signup.html", {'signup_form': signup_form, 'error_messages': error_messages})
+
     
     
 
@@ -89,15 +131,16 @@ def verify_user_mail(request, email):
                     user.is_active = True
                     user.save()
                     
+                    
                     return redirect('login')
                 else:
-                    messages.ERROR(request, 'The otp is not correct')
+                    messages.error(request, 'The otp is not correct')
 
             except OTPModel.DoesNotExist:
-                messages.ERROR(request, 'OTP is not send')
+                messages.error(request, 'OTP is not send')
                 
             except User.DoesNotExist:
-                messages.ERROR(request, 'User with this email does not exist')
+                messages.error(request, 'User with this email does not exist')
 
 
     else:
@@ -198,8 +241,16 @@ def user_login(request):
             if user is not None:
                 auth_login(request, user)
                 return redirect('home')  # Redirect to profile on successful login
+            else:
+                messages.error(request, 'Invalid username or password.')  # Error message for invalid credentials
+                return redirect('login')
+        else:
+            for field, errors in login_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in field : {error}")  # Error message for form validation errors
 
-    return render(request, 'user/login.html', {'login_form': login_form})
+    error_messages = [message.message for message in messages.get_messages(request)]
+    return render(request, 'user/login.html', {'login_form': login_form,'error_messages': error_messages})
 
 @login_required
 def profile(request):
@@ -214,36 +265,53 @@ def change_password(request):
     if request.method == 'POST':
         password_change_form = PasswordChangeForm(request.user, request.POST)
         if password_change_form.is_valid():
-            password_change_form.save()
-            update_session_auth_hash(request, password_change_form.user)
-            return redirect('profile')
+            new_password1 = password_change_form.cleaned_data['new_password1']
+            new_password2 = password_change_form.cleaned_data['new_password2']
+
+            if new_password1 != new_password2:
+                messages.error(request, "Passwords don't match.")
+            else:
+                password_change_form.save()
+                update_session_auth_hash(request, password_change_form.user)
+                return redirect('profile')
+        else:
+            for field, errors in password_change_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in field : {error}")
     else:
          password_change_form = PasswordChangeForm(request.user)
 
-    return render(request, 'user/changepassword.html', {'password_change_form': password_change_form})
+    error_messages = [message.message for message in messages.get_messages(request)]
+
+    return render(request, 'user/changepassword.html', {'password_change_form': password_change_form, 'error_messages': error_messages})
 
 @login_required
 def edit_profile(request):
     user = request.user
 
     if request.method == 'POST':
-        edit_form = EditProfileForm(request.POST, request.FILES, instance=user)  # Pass request.FILES for file data
+        edit_form = EditProfileForm(request.POST, request.FILES, instance=user)
         
         if edit_form.is_valid():
-            # Save the form without profile_picture field
             edit_form.save(commit=False)
             
-            # Handle profile_picture separately
             profile_picture = request.FILES.get('profile_picture')
             if profile_picture:
                 user.profile_picture = profile_picture
                 user.save()
 
             return redirect('profile')
+        else:
+            for field, errors in edit_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error in field : {error}")
     else:
         edit_form = EditProfileForm(instance=user)
+        
 
-    return render(request, 'user/editprofile.html', {'edit_form': edit_form})
+    error_messages = [message.message for message in messages.get_messages(request)]
+
+    return render(request, 'user/editprofile.html', {'edit_form': edit_form, 'error_messages': error_messages})
 
 
 def all_user_view(request):
