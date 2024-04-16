@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'campaign',
     'volunteers',
     'users',
-    'ckeditor',
+    'notification',
     'django_social_share',
 ]
 

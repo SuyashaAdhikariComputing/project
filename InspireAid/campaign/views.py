@@ -1,7 +1,7 @@
 
 from decimal import Decimal
 import json
-
+from notification.models import Notification
 from django.http import HttpResponseRedirect
 from .models import Donation
 from django.contrib import messages
@@ -11,12 +11,32 @@ from django.views.generic import ListView, DetailView, View, DeleteView
 import requests
 import urllib3
 from .models import Campaign,CampaignComment
-
+from volunteers.models import Category
 # Create your views here.
 
 class CampaignView(ListView):
     model=Campaign
     template_name='campaign/campaignhome.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()  # Get all categories
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        name_query = self.request.GET.get('name')
+        date_query = self.request.GET.get('date')
+        category_query = self.request.GET.get('category')
+
+        if name_query:
+            queryset = queryset.filter(title__icontains=name_query)
+        if date_query:
+            queryset = queryset.filter(created_at__date=date_query)
+        if category_query:
+            queryset = queryset.filter(category_id=category_query)
+
+        return queryset
 
 class CampaignDetailView(DetailView):
     model=Campaign
@@ -41,7 +61,9 @@ class CampaignPostView(View):
     template_name = 'campaign/campaignform.html'
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        categories = Category.objects.all()  # Get all categories
+        context = {'categories': categories}
+        return render(request, self.template_name, context)
     
     def post(self, request, *args, **kwargs):
         # Retrieve data from POST request
@@ -49,6 +71,7 @@ class CampaignPostView(View):
         description = request.POST.get('content')
         target_amount = request.POST.get('amount')
         image = request.FILES.get('image')
+        category_id = request.POST.get('category')
 
         # Create Campaign object
         campaign = Campaign.objects.create(
@@ -56,7 +79,8 @@ class CampaignPostView(View):
             description=description,
             target_amount=target_amount,
             image=image,
-            author=request.user
+            author=request.user,
+            category_id=category_id
         )
 
         # Redirect to success URL
@@ -67,7 +91,9 @@ class CampaignEditView(View):
 
     def get(self, request, slug, *args, **kwargs):
         campaign = get_object_or_404(Campaign, slug=slug)
-        return render(request, self.template_name, {'campaign': campaign})
+        categories = Category.objects.all()  # Get all categories
+        context = {'campaign': campaign, 'categories': categories}
+        return render(request, self.template_name, context)
 
     def post(self, request, slug, *args, **kwargs):
         campaign = get_object_or_404(Campaign, slug=slug)
@@ -83,7 +109,8 @@ class CampaignEditView(View):
             # Assign the new uploaded image
             campaign.image = request.FILES['image']
 
-        
+        category_id = request.POST.get('category')
+        campaign.category_id = category_id
         campaign.save()
 
         return redirect('campaigndetail', slug=slug)
@@ -193,7 +220,7 @@ def verifykhalti(request):
 
           pidx= request.GET.get('pidx')
           campaign_id= request.GET.get('purchase_order_id')
-          amount=request.POST.get('amount')
+          amount=request.GET.get('amount')
           
 
           data=json.dumps({
@@ -207,20 +234,28 @@ def verifykhalti(request):
           new_res=json.loads(res.text)
           print(new_res)
          
-          
+          donor_amount= Decimal(amount) / Decimal(100)
     
           if new_res['status']== 'Completed':
               donation = Donation.objects.create(
                  campaign_id=campaign_id,
                  user_id=request.user.id,
-                 amount=amount
+                 amount=donor_amount
               )
 
               donation.save()
 
               campaign = get_object_or_404(Campaign, id=campaign_id)
-              campaign.current_amount += Decimal(amount/100)
+              campaign.current_amount += Decimal(amount) / Decimal(100)
               campaign.save()
+
+              campaign_owner = campaign.author
+
+             
+
+              # Notification creation
+              message = f"A donation of {donor_amount} Rs. has been made to your campaign: {campaign.title}"
+              Notification.objects.create(recipient=campaign_owner, message=message)
          
           return redirect(reverse('campaignhome'))
         

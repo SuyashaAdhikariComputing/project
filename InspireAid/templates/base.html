@@ -161,7 +161,7 @@
 
 					            <li class="nav-item">
 
-					            <a class="nav-link mx-lg-2" href="{% url 'contact' %}">Contact Us</a>
+					            <a class="nav-link mx-lg-2" href="{% url 'contact' %}">Contact</a>
 					            
 					            </li>
 
@@ -187,6 +187,13 @@
 										<!-- Display UserList link for admin and employee -->
 										<li class="nav-item">
 											<a class="nav-link mx-lg-2" href="{% url 'all_user_view' %}">UserList</a>
+										</li>
+									{% endif %}
+
+									{% if user.role == 'organization' or user.role == 'donor' %}
+										<!-- Display UserList link for admin and employee -->
+										<li class="nav-item">
+											<a class="nav-link mx-lg-2" href="{% url 'view_notifications' %}">Notification</a>
 										</li>
 									{% endif %}
 

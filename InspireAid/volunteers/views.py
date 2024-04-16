@@ -8,8 +8,28 @@ from django.views.generic import ListView, DetailView, View, DeleteView
 from django.contrib import messages
 
 class VolunteerListView(ListView):
-    model=VolunteerCampaign
-    template_name='volunteer/volunteer_home.html'
+    model = VolunteerCampaign
+    template_name = 'volunteer/volunteer_home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()  # Get all categories
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        name_query = self.request.GET.get('name')
+        date_query = self.request.GET.get('date')
+        category_query = self.request.GET.get('category')
+
+        if name_query:
+            queryset = queryset.filter(title__icontains=name_query)
+        if date_query:
+            queryset = queryset.filter(end_date=date_query)
+        if category_query:
+            queryset = queryset.filter(categories__id=category_query)
+
+        return queryset
 
 class VolunteerCampaignDetailView(DetailView):
     model=VolunteerCampaign

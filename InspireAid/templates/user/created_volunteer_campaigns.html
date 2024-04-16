@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Volunteer Campaigns Created by {{ user.username }}{% endblock title %}
+
+{% block extrastyles %}
+    
+{% endblock extrastyles %}
+
+{% block body %}
+<div class="container" style="margin-top:10%">
+    
+    {% if volunteer_campaigns %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for campaign in volunteer_campaigns %}
+                    <tr>
+                        <td>{{ campaign.title }}</td>
+                        <td><a href="{% url 'volunteercampaigndetail' slug=campaign.slug %}" class="btn btn-primary">View Campaign</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center mt-5 mb-5" style="color: red;" >No volunteer campaigns created yet.</p>
+    {% endif %}
+</div>
+{% endblock body %}

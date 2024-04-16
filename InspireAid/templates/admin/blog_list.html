@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock title %}
+{% block title %}Blog List{% endblock title %}
 
 {% block extrastyles %}
     {% load static %}
@@ -21,35 +21,48 @@
 
 <div class="container" style="margin-top:10%;">
     <h1 class="mb-5 text-center">Blog List</h1>
-    <div class="table-responsive">
+    <form method="get" action="{% url 'blog_list' %}">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="title" placeholder="Search by title">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="date">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-success">Search</button>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive mt-5 mb-5">
         {% if blogs %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Content</th>
-                <th>Author</th>
-                <th>Created At</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for blog in blogs %}
-            <tr>
-                <td>{{ blog.title }}</td>
-                <td>{{ blog.content|truncatechars:50 }}</td>
-                <td>{{ blog.author }}</td>
-                <td>{{ blog.timestamp }}</td>
-                <td>
-                    <a href="{% url 'blogpost' slug=blog.slug %}" class="btn btn-primary">View Details</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>No blogs available.</p>
-    {% endif %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Author</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for blog in blogs %}
+                <tr>
+                    <td>{{ blog.title }}</td>
+                    <td>{{ blog.content|truncatechars:50 }}</td>
+                    <td>{{ blog.author }}</td>
+                    <td>{{ blog.timestamp }}</td>
+                    <td>
+                        <a href="{% url 'blogpost' slug=blog.slug %}" class="btn btn-primary">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center mt-5 mb-5" style="color: red;">No blogs available.</p>
+        {% endif %}
     </div>
 </div>
 

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock title %}
+{% block title %}Campaign List{% endblock title %}
 
 {% block extrastyles %}
     {% load static %}
@@ -21,7 +21,30 @@
 
 <div class="container" style="margin-top:10%;">
     <h1 class="mb-5 text-center">Campaign List</h1>
-    <div class="table-responsive">
+    <form method="get" action="{% url 'campaign_list' %}">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="title" placeholder="Search by title">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="date">
+            </div>
+           
+            <div class="col-md-3">
+                <select class="form-select" name="category">
+                    <option value="">Select category</option>
+                    {% for category in categories %}
+                        <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-success">Filter</button>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive mt-5 mb-5">
+
         {% if campaigns %}
         <table class="table">
             <thead>
@@ -48,7 +71,7 @@
             </tbody>
         </table>
         {% else %}
-        <p class="text-center">No campaigns  available.</p>
+        <p class="text-center" style="color: red;">No campaigns available.</p>
         {% endif %}
     </div>
 </div>

@@ -383,13 +383,51 @@ def user_campaigns(request, user_id):
     campaigns = Campaign.objects.filter(author=user)
     return render(request, 'user/created_campaign.html', {'user': user, 'campaigns': campaigns})
 
-def campaign_list(request):
-    campaigns = Campaign.objects.all()  # Retrieve all campaigns
-    return render(request, 'admin/campaign_list.html', {'campaigns': campaigns})
+def user_volunteer_campaigns(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    volunteer_campaigns = VolunteerCampaign.objects.filter(author=user)
+    return render(request, 'user/created_volunteer_campaigns.html', {'user': user, 'volunteer_campaigns': volunteer_campaigns})
 
+def campaign_list(request):
+    title_filter = request.GET.get('title')
+    date_filter = request.GET.get('date')
+    category_filter = request.GET.get('category')
+
+    campaigns = Campaign.objects.all()
+
+    if title_filter:
+        campaigns = campaigns.filter(title__icontains=title_filter)
+
+    if date_filter:
+        campaigns = campaigns.filter(created_at__date=date_filter)
+
+    if category_filter:
+        campaigns = campaigns.filter(category__name=category_filter)  # Use 'category' field instead of 'categories'
+
+    categories = Category.objects.all()  # Retrieve all categories
+    
+    context = {
+        'campaigns': campaigns,
+        'categories': categories,
+    }
+    
+    return render(request, 'admin/campaign_list.html', context)
+    
+   
 def blog_list(request):
-    blogs = Post.objects.all()  # Retrieve all blog posts
+    title_filter = request.GET.get('title')
+    date_filter = request.GET.get('date')
+
+    blogs = Post.objects.all()
+
+    if title_filter:
+        blogs = blogs.filter(title__icontains=title_filter)
+
+    if date_filter:
+        blogs = blogs.filter(timestamp__date=date_filter)
+
     return render(request, 'admin/blog_list.html', {'blogs': blogs})
+
 
 def category_list(request):
     categories = Category.objects.all()  

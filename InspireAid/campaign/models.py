@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from django.utils.text import slugify
 from users.models import CustomUser as User
-from ckeditor.fields import RichTextField
+from volunteers.models import Category as VolunteerCategory 
 # Create your models here.
 
 def get_default_author():
@@ -11,7 +11,6 @@ def get_default_author():
 
 class Campaign(models.Model):
     title = models.CharField(max_length=255)
-    #description=RichTextField(blank=True, null=True)
     description = models.TextField()
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='myimage/', null=True, blank=True)  # New field for image uploads
@@ -20,6 +19,7 @@ class Campaign(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     slug=models.CharField(max_length=130,unique=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    category = models.ForeignKey(VolunteerCategory, on_delete=models.SET_NULL, related_name='campaigns', null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:

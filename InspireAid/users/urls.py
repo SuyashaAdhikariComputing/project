@@ -24,6 +24,7 @@ urlpatterns = [
     path('category/delete/<int:category_id>/', views.delete_category, name='delete_category'),
     path('user-profile/<int:user_id>/', views.user_profile, name='user_profile'),
     path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('user/<int:user_id>/volunteer_campaigns/', views.user_volunteer_campaigns, name='user_volunteer_campaigns'),
     path('user/<int:user_id>/blogs/', views.user_blogs, name='user_blogs'),
     path('user/<int:user_id>/campaigns/', views.user_campaigns, name='user_campaigns'),
     path('verify-password-reset/<str:email>/', views.verify_password_reset, name='verify_password_reset'),
