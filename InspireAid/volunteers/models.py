@@ -63,3 +63,5 @@ class VolunteerApplication(models.Model):
 
     def __str__(self):
         return f"{self.user.username} applied for {self.campaign.title}"
+    
+    

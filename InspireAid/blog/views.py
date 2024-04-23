@@ -18,10 +18,9 @@ def postcontent(request):
         content=request.POST['content'] 
         image = request.FILES.get('image')
 
-        if image:
-            print("Received image:", image)
-        else:
-            print("No image received")
+        if not (title and content):
+            messages.error(request, "Title and content fields cannot be empty.")
+            return render(request, 'blog/blogform.html', {'error_messages': messages.get_messages(request)})
         
         blog_post=Post(title=title, image=image, content=content, author=request.user)
         blog_post.save()

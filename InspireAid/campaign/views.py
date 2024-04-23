@@ -66,6 +66,8 @@ class CampaignPostView(View):
         return render(request, self.template_name, context)
     
     def post(self, request, *args, **kwargs):
+        categories = Category.objects.all() 
+        context = {'categories': categories}
         # Retrieve data from POST request
         title = request.POST.get('title')
         description = request.POST.get('content')
@@ -73,15 +75,25 @@ class CampaignPostView(View):
         image = request.FILES.get('image')
         category_id = request.POST.get('category')
 
-        # Create Campaign object
-        campaign = Campaign.objects.create(
-            title=title,
-            description=description,
-            target_amount=target_amount,
-            image=image,
-            author=request.user,
-            category_id=category_id
-        )
+        if not (title and description and target_amount):
+            messages.error(request, 'Title, content, and target amount are required.')
+            return render(request, self.template_name, {'error_messages': messages.get_messages(request), 'context': context})
+        elif not target_amount.isdecimal():
+            messages.error(request, 'Invalid target amount format. Please provide a valid decimal value.')
+            return render(request, self.template_name, {'error_messages': messages.get_messages(request), 'context': context})
+        elif Decimal(target_amount) <= 10:
+            messages.error(request, 'Target amount must be greater than 10.')
+            return render(request, self.template_name, {'error_messages': messages.get_messages(request), 'context': context})
+
+        else:
+             Campaign.objects.create(
+                title=title,
+                description=description,
+                target_amount=target_amount,
+                image=image,
+                author=request.user,
+                category_id=category_id
+            )
 
         # Redirect to success URL
         return redirect('/campaign/campaignhome/')
@@ -155,11 +167,20 @@ def check_amount_limit(request):
     current_amount = campaign.current_amount
     current_capacity=total_capacity-current_amount
 
-    if current_capacity >= amount:
-        return initiatekhalti(request)
+    if amount <= 1000 and amount >= 10:
+
+        if amount < 0:
+          messages.error(request, 'Donation amount cannot be negative.')
+          return redirect('campaigndetail', slug=campaign.slug)
+
+        elif current_capacity >= amount:
+            return initiatekhalti(request)
         
+        else:
+            messages.error(request, f'Donation amount exceeds total campaign capacity So, you cant donate more than {current_capacity} ')
+            return redirect('campaigndetail', slug=campaign.slug)
     else:
-        messages.error(request, f'Donation amount exceeds total campaign capacity So, you cant donate more than {current_capacity} ')
+        messages.error(request, ' you cant donate more than Rs 1000 or more than Rs 10 ')
         return redirect('campaigndetail', slug=campaign.slug)
 
 
@@ -172,9 +193,6 @@ def initiatekhalti(request):
     
     return_url=request.POST.get('return_url')
 
-    
-
-    
     #print("campaign_id",purchase_order_id)
     #print("amount",amount)
     #print("return_url",return_url)
@@ -188,7 +206,7 @@ def initiatekhalti(request):
         "purchase_order_id": purchase_order_id ,
         "purchase_order_name": "test",
         "customer_info": {
-        "name": user.first_name,
+        "name": user.first_name if user.first_name else "Anonymous",
         "email": user.email,
         "phone": user.phone
         }
@@ -202,6 +220,7 @@ def initiatekhalti(request):
 
     print(response.text)
     new_res=json.loads(response.text)
+
 
     print(new_res)
     return redirect(new_res['payment_url'])
@@ -251,13 +270,11 @@ def verifykhalti(request):
 
               campaign_owner = campaign.author
 
-             
-
               # Notification creation
               message = f"A donation of {donor_amount} Rs. has been made to your campaign: {campaign.title}"
               Notification.objects.create(recipient=campaign_owner, message=message)
          
-          return redirect(reverse('campaignhome'))
+          return render(request, 'donation/sucess_page.html')
         
 def donation_details(request, campaign_id):
     campaign = get_object_or_404(Campaign, id=campaign_id)

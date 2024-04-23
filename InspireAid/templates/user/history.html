@@ -27,7 +27,7 @@
                         <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ donation.campaign.title }}</td>
-                            <td>${{ donation.amount }}</td>
+                            <td>Rs{{ donation.amount }}</td>
                             <td>{{ donation.date|date:"M d, Y" }}</td>
                         </tr>
                         {% endfor %}

@@ -24,5 +24,3 @@ def Contact(request):
 
     return render(request,'home/contact.html')# go to contact page
 
-def about(request):
-    return HttpResponse('This is about')

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 # Create your views here.
 from django.shortcuts import render
-
+from notification.models import Notification
 from volunteers.models import VolunteerCampaign,Category,VolunteerCampaignComment,VolunteerApplication
 from django.views.generic import ListView, DetailView, View, DeleteView
 from django.contrib import messages
@@ -166,6 +166,8 @@ def apply_for_volunteer(request, campaign_id):
         campaign.current_volunteers += 1
         campaign.save()
 
+        message = f"An applicant named {user} has applied for volunteer in {campaign.title}"
+        Notification.objects.create(recipient=campaign.author, message=message)
         messages.success(request, "You have successfully applied for this campaign.")
         return redirect('volunteer-campaign-detail', pk=campaign_id)
 
@@ -181,7 +183,11 @@ def remove_volunteer_application(request, campaign_id):
         campaign.current_volunteers -= 1
         campaign.save()
 
-        messages.error(request, "You have successfully removed volunteer application.")
+        message = f"An applicant named {user} has removed application for {campaign.title}"
+        Notification.objects.create(recipient=campaign.author, message=message)
+         
+
+        messages.success(request, "You have successfully removed volunteer application.")
         return redirect('volunteer-campaign-detail', pk=campaign_id)
     
 

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Donation Successful{% endblock title %}
+
+{% block extrastyles %}
+    {% load static %}
+    <!-- Additional styles for the home template -->
+    <style>
+        /* Custom CSS for the payment success page */
+        body {
+            background-color: #f8f9fa;
+        }
+
+       
+        .card {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+    </style>
+{% endblock extrastyles %}
+
+{% block body %}
+
+<div class="container mb-5" style="margin-top:10%;" >
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <h2 class="text-success text-center mb-4">Payment Successful</h2>
+                <p class="text-center">Thank you for your payment. Your transaction has been completed successfully.</p>
+                <div class="text-center">
+                    <a href="{% url 'campaignhome' %}" class="btn btn-primary mt-3">Continue</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bootstrap JS and jQuery (optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock body %}

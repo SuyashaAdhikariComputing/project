@@ -362,7 +362,7 @@ def delete_user(request, user_id):
         messages.success(request, 'User deleted successfully.')
     
     # Redirect back to the user list page
-    return redirect('employee_user_list')
+    return redirect('all_user_view')
 
 def history(request):
     # Get donations related to the logged-in user
